@@ -1,0 +1,520 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import existing styles */
+@import '../css/styles.css';
+
+/* Custom blog typography enhancements */
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Enable vertical scrolling for all pages */
+body {
+  overflow-y: auto !important;
+  height: auto !important;
+  min-height: 100vh;
+}
+
+html {
+  overflow-y: auto !important;
+  height: auto !important;
+}
+
+/* Vertical scroll container for main page */
+.horizontal-scroll-container {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.horizontal-scroll-container .section {
+  width: 100%;
+  min-height: auto;
+  padding: 6rem 0;
+  padding-top: calc(4rem + 2rem);
+  scroll-margin-top: 4rem;
+}
+
+/* Fallback: Make hero content visible immediately, then allow animations */
+.hero-section [data-animate] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+}
+
+.hero-section #heroCard {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+/* Make reality section content visible */
+.reality-section [data-animate] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+.reality-section .reality-list-item {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.reality-section .reality-header {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.reality-section .reality-editorial-list {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.reality-section .reality-editorial-grid {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.reality-section .reality-diagnosis-panel {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.reality-section .reality-content {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.reality-section .reality-item-number,
+.reality-section .reality-item-text {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.reality-section .diagnosis-panel {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Make failure section content visible */
+.failure-section [data-animate] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+.failure-section .failure-header {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.failure-section .failure-reason-item {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  display: list-item !important;
+  visibility: visible !important;
+}
+
+.failure-section .failure-left {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.failure-section .failure-right {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.failure-section .failure-panel {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.failure-section .failure-pipeline-stage {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+.failure-section .failure-reasons-list,
+.failure-section .failure-reasons-ul {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.failure-section .failure-pipeline {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.failure-section .pipeline-stage-badge,
+.failure-section .pipeline-stage-content,
+.failure-section .pipeline-stage-label,
+.failure-section .pipeline-stage-title,
+.failure-section .pipeline-stage-bullets {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.failure-section .failure-panel-title {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.failure-section .failure-grid-12 {
+  display: grid !important;
+  visibility: visible !important;
+}
+
+/* Make solution/medora-does section content visible */
+.medora-does-section [data-animate],
+.solution-section [data-animate] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+.medora-does-section .medora-does-block,
+.solution-section .medora-does-block {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: translateY(0) !important;
+}
+
+.medora-does-section .medora-does-left,
+.solution-section .medora-does-left {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.medora-does-section .medora-does-right,
+.solution-section .medora-does-right {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important;
+}
+
+.medora-does-section .medora-does-grid,
+.solution-section .medora-does-grid {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.medora-does-section .medora-does-eyebrow,
+.medora-does-section .medora-does-headline,
+.medora-does-section .medora-does-support,
+.medora-does-section .medora-does-block-label,
+.medora-does-section .medora-does-block-text {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.medora-does-section .medora-does-divider {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: 1px !important;
+  background: rgba(243, 241, 236, 0.1) !important;
+}
+
+/* Make engagement section content visible */
+.engagement-section [data-animate],
+.engagement-section [data-animate="card"] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+.engagement-section .engagement-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  transform: translateY(0) !important;
+}
+
+.engagement-section .engagement-cards {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.engagement-section .engagement-cards-wrapper {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.engagement-section .engagement-connector-line {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.engagement-section .engagement-content {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.engagement-section .engagement-headline {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.engagement-section .engagement-output {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.engagement-section .card-step-badge,
+.engagement-section .card-icon,
+.engagement-section .card-kicker,
+.engagement-section .card-title,
+.engagement-section .card-description,
+.engagement-section .card-bullets {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.engagement-section .card-bullets {
+  display: block !important;
+}
+
+.engagement-section .card-bullets li {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: list-item !important;
+}
+
+/* Make who-section content visible */
+.who-section [data-animate],
+.who-section [data-animate="panel"] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+.who-section .who-panel {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: translateY(0) !important;
+}
+
+.who-section .who-left,
+.who-section .who-right {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.who-section .who-grid-12 {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.who-section .who-container {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.who-section .who-eyebrow,
+.who-section .who-headline,
+.who-section .who-checklist,
+.who-section .who-checklist-item,
+.who-section .who-checklist-text,
+.who-section .who-check-icon,
+.who-section .who-checklist-divider,
+.who-section .who-checklist-note {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.who-section .who-checklist-item {
+  display: flex !important;
+}
+
+.who-section .who-checklist {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.who-section .who-deliverables,
+.who-section .who-deliverable-item,
+.who-section .who-deliverable-number,
+.who-section .who-deliverable-content,
+.who-section .who-deliverable-title,
+.who-section .who-deliverable-desc {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+.who-section .who-deliverables {
+  flex-direction: column !important;
+}
+
+.who-section .who-cta-bar,
+.who-section .who-cta-text,
+.who-section .who-cta-buttons,
+.who-section .who-cta-primary,
+.who-section .who-footnote {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Make founder section content visible */
+.founder-section [data-animate],
+.founder-section [data-animate="card"],
+.founder-section [data-animate="content"] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+.founder-section .founder-profile-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: translateY(0) !important;
+}
+
+.founder-section .founder-left,
+.founder-section .founder-right {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.founder-section .founder-grid-12 {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.founder-section .founder-container {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.founder-section .founder-portrait-container,
+.founder-section .founder-portrait,
+.founder-section .founder-portrait-fallback,
+.founder-section .founder-monogram,
+.founder-section .founder-name,
+.founder-section .founder-role,
+.founder-section .founder-credibility,
+.founder-section .founder-credibility li {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.founder-section .founder-credibility {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.founder-section .founder-credibility li {
+  display: list-item !important;
+}
+
+.founder-section .founder-eyebrow,
+.founder-section .founder-headline,
+.founder-section .founder-text,
+.founder-section .founder-paragraph,
+.founder-section .founder-chips,
+.founder-section .founder-chip {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.founder-section .founder-text {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.founder-section .founder-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.founder-section .founder-chip {
+  display: inline-flex !important;
+}
+
+.who-section .who-cta-bar {
+  display: flex !important;
+}
+
