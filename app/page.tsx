@@ -584,7 +584,8 @@ export default function HomePage() {
               <div className="failure-left">
                 <div className="failure-header" data-animate="header">
                   <p className="failure-badge">Who Medora Is For</p>
-                  <h2 className="failure-headline">Adoption engineered for real-world healthcare.</h2>
+                  <h2 className="failure-headline">Nearly 70% of healthcare products fail due to poor market fit.</h2>
+                  <p className="failure-intro">Our mission is to help your company define the right strategy and build a clear path to success.</p>
                 </div>
                 <div className="failure-reasons-list">
                   <div className="who-subsection" data-animate="subsection">
