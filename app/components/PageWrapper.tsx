@@ -8,9 +8,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   
   useEffect(() => {
     // Set data-page attribute on body for CSS targeting
-    const page = pathname?.startsWith('/blog') ? 'blog' :
-                 pathname?.startsWith('/admin') ? 'admin' :
-                 pathname === '/privacy' ? 'privacy' :
+    const page = pathname === '/privacy' ? 'privacy' :
                  pathname === '/imprint' ? 'imprint' :
                  pathname === '/cookie-settings' ? 'cookie-settings' :
                  'home'

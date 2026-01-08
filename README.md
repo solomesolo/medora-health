@@ -9,6 +9,7 @@ A modern, responsive website for Medora, helping healthtech teams turn pilot app
 - **Contact Form**: Integrated contact form with email notifications via Resend
 - **Performance**: Optimized for speed and SEO
 - **Accessibility**: Built with accessibility best practices
+- **Production Ready**: Clean build, no unnecessary dependencies
 
 ## 📋 Tech Stack
 
@@ -85,7 +86,6 @@ medora-health/
 │   ├── api/               # API routes
 │   │   └── contact/      # Contact form endpoint
 │   ├── components/        # React components
-│   ├── blog/             # Blog pages (if needed)
 │   └── page.tsx          # Home page
 ├── public/                # Static assets
 │   ├── images/           # Image files
