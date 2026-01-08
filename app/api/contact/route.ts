@@ -1,15 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Only initialize Resend if API key is available
-let resend: any = null
-if (process.env.RESEND_API_KEY) {
-  try {
-    const { Resend } = require('resend')
-    resend = new Resend(process.env.RESEND_API_KEY)
-  } catch (error) {
-    console.warn('Resend package not available:', error)
-  }
-}
+import { Resend } from 'resend'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,9 +8,40 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!name || !company || !role || !email || !message) {
+      console.error('❌ Missing required fields:', { name: !!name, company: !!company, role: !!role, email: !!email, message: !!message })
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
+      )
+    }
+
+    // Check for API key
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+      console.error('❌ RESEND_API_KEY is not set in environment variables')
+      console.error('Environment check:', {
+        hasKey: !!apiKey,
+        nodeEnv: process.env.NODE_ENV,
+        allEnvKeys: Object.keys(process.env).filter(k => k.includes('RESEND'))
+      })
+      return NextResponse.json(
+        { 
+          error: 'Email service is not configured. Please contact support directly at anna.solovyova@medora.agency',
+          debug: process.env.NODE_ENV === 'development' ? 'RESEND_API_KEY is missing' : undefined
+        },
+        { status: 500 }
+      )
+    }
+
+    // Initialize Resend inside the handler
+    let resend: Resend
+    try {
+      resend = new Resend(apiKey)
+    } catch (initError: any) {
+      console.error('❌ Failed to initialize Resend:', initError)
+      return NextResponse.json(
+        { error: 'Failed to initialize email service. Please try again later.' },
+        { status: 500 }
       )
     }
 
@@ -41,63 +62,76 @@ ${message}
 This message was sent from the Medora website contact form.
     `.trim()
 
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+    const toEmail = 'anna.solovyova@medora.agency'
+
+    console.log('📧 Attempting to send email...')
+    console.log('From:', fromEmail)
+    console.log('To:', toEmail)
+    console.log('Subject:', emailSubject)
+
     // Send email using Resend
     try {
-      if (!process.env.RESEND_API_KEY || !resend) {
-        console.warn('RESEND_API_KEY is not set - email will be logged only')
-        // Log the email for development/debugging
-        console.log('='.repeat(50))
-        console.log('CONTACT FORM SUBMISSION (Email not sent - API key missing)')
-        console.log('='.repeat(50))
-        console.log('To: anna.solovyova@medora.agency')
-        console.log('Subject:', emailSubject)
-        console.log('From:', email)
-        console.log('---')
-        console.log(emailBody)
-        console.log('='.repeat(50))
-        console.log('\nTo enable email sending:')
-        console.log('1. Sign up at https://resend.com')
-        console.log('2. Get API key from https://resend.com/api-keys')
-        console.log('3. Add RESEND_API_KEY to .env file')
-        console.log('4. Restart server\n')
-      } else {
-        const { data, error } = await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
-          to: 'anna.solovyova@medora.agency',
-          subject: emailSubject,
-          text: emailBody,
-          replyTo: email,
+      const { data, error } = await resend.emails.send({
+        from: fromEmail,
+        to: toEmail,
+        subject: emailSubject,
+        text: emailBody,
+        replyTo: email,
+      })
+
+      if (error) {
+        console.error('❌ Resend API error:', JSON.stringify(error, null, 2))
+        console.error('Error details:', {
+          message: error.message,
+          name: error.name,
+          statusCode: (error as any).statusCode
         })
-
-        if (error) {
-          console.error('Resend error:', error)
-          // Log the email as fallback
-          console.log('Email failed to send, but here is the data:')
-          console.log('To: anna.solovyova@medora.agency')
-          console.log('Subject:', emailSubject)
-          console.log('Body:', emailBody)
-        } else {
-          console.log('✅ Email sent successfully:', data?.id)
-        }
+        
+        // Return error to client so they know it failed
+        return NextResponse.json(
+          { 
+            error: 'Failed to send email. Please try again or contact us directly at anna.solovyova@medora.agency',
+            debug: process.env.NODE_ENV === 'development' ? error : undefined
+          },
+          { status: 500 }
+        )
       }
-    } catch (emailError: any) {
-      console.error('Email sending error:', emailError)
-      // Log the email data as fallback
-      console.log('Email data (for manual sending):')
-      console.log('To: anna.solovyova@medora.agency')
-      console.log('Subject:', emailSubject)
-      console.log('From:', email)
-      console.log('Message:', message)
-    }
 
+      if (data) {
+        console.log('✅ Email sent successfully!')
+        console.log('Email ID:', data.id)
+        console.log('Response:', JSON.stringify(data, null, 2))
+      } else {
+        console.warn('⚠️ No error but also no data returned from Resend')
+      }
+
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: 'Form submitted successfully',
+          emailId: data?.id 
+        },
+        { status: 200 }
+      )
+    } catch (emailError: any) {
+      console.error('❌ Exception while sending email:', emailError)
+      console.error('Error stack:', emailError.stack)
+      console.error('Error message:', emailError.message)
+      
+      return NextResponse.json(
+        { 
+          error: 'An unexpected error occurred while sending the email. Please try again or contact us directly at anna.solovyova@medora.agency',
+          debug: process.env.NODE_ENV === 'development' ? emailError.message : undefined
+        },
+        { status: 500 }
+      )
+    }
+  } catch (error: any) {
+    console.error('❌ Contact form processing error:', error)
+    console.error('Error stack:', error.stack)
     return NextResponse.json(
-      { success: true, message: 'Form submitted successfully' },
-      { status: 200 }
-    )
-  } catch (error) {
-    console.error('Contact form error:', error)
-    return NextResponse.json(
-      { error: 'Failed to process form submission' },
+      { error: 'Failed to process form submission. Please try again.' },
       { status: 500 }
     )
   }
