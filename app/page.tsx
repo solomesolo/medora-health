@@ -6,6 +6,106 @@ import Link from 'next/link'
 
 export default function HomePage() {
   useEffect(() => {
+    // Initialize contact form handler directly
+    const initContactForm = () => {
+      const contactForm = document.getElementById('contactForm') as HTMLFormElement
+      if (!contactForm) {
+        setTimeout(initContactForm, 100)
+        return
+      }
+
+      const handleSubmit = async (e: Event) => {
+        e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
+
+        const submitButton = contactForm.querySelector('.form-submit') as HTMLButtonElement
+        if (!submitButton) return
+
+        const originalText = submitButton.textContent || 'Start the conversation'
+        submitButton.disabled = true
+        submitButton.textContent = 'Sending...'
+
+        try {
+          const formData = new FormData(contactForm)
+          const data = Object.fromEntries(formData)
+
+          const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          })
+
+          const result = await response.json()
+
+          if (response.ok && result.success) {
+            // Hide form
+            contactForm.style.transition = 'opacity 0.3s ease'
+            contactForm.style.opacity = '0'
+            contactForm.style.visibility = 'hidden'
+            contactForm.style.height = '0'
+            contactForm.style.overflow = 'hidden'
+            contactForm.style.margin = '0'
+            contactForm.style.padding = '0'
+
+            // Show confirmation
+            const formWrapper = contactForm.closest('.contact-form-wrapper')
+            if (formWrapper) {
+              const existing = formWrapper.querySelector('.form-confirmation')
+              if (existing) existing.remove()
+
+              const confirmation = document.createElement('div')
+              confirmation.className = 'form-confirmation'
+              confirmation.style.cssText = `
+                display: block !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                margin-top: 2rem;
+                padding: 2rem;
+                background-color: rgba(95, 125, 115, 0.25);
+                border: 2px solid rgba(95, 125, 115, 0.5);
+                border-radius: 0.75rem;
+              `
+              confirmation.innerHTML = `
+                <div class="form-confirmation-content">
+                  <p class="form-confirmation-text" style="font-size: 1.125rem; line-height: 1.6; color: var(--text-primary); margin: 0; font-weight: 500;">
+                    We have got your request, our team will contact you soon.
+                  </p>
+                </div>
+              `
+              contactForm.insertAdjacentElement('afterend', confirmation)
+            }
+
+            contactForm.reset()
+          } else {
+            throw new Error(result.error || 'Failed to send message')
+          }
+        } catch (error) {
+          console.error('Form error:', error)
+          alert('Sorry, there was an error sending your message. Please try again or contact us directly at anna.solovyova@medora.agency')
+        } finally {
+          submitButton.disabled = false
+          submitButton.textContent = originalText
+        }
+      }
+
+      contactForm.addEventListener('submit', handleSubmit)
+      
+      // Also add click handler to button
+      const submitButton = contactForm.querySelector('.form-submit')
+      if (submitButton) {
+        submitButton.addEventListener('click', (e) => {
+          e.preventDefault()
+          handleSubmit(e)
+        })
+      }
+
+      console.log('✅ Contact form handler initialized directly in React')
+    }
+
+    // Initialize contact form
+    initContactForm()
+
     // Check if we're in vertical scroll mode before loading the script
     if (typeof window !== 'undefined') {
       const loadScript = () => {
@@ -14,7 +114,7 @@ export default function HomePage() {
         if (existing) existing.remove()
         
         const script = document.createElement('script')
-        script.src = '/js/main.js?v=71' // Increment version to force reload
+        script.src = '/js/main.js?v=75' // Increment version to force reload
         script.async = true
         script.onload = () => {
           // Force trigger animations if they don't fire automatically
@@ -25,6 +125,7 @@ export default function HomePage() {
               if (target.classList.contains('hero-eyebrow') || 
                   target.classList.contains('hero-headline') || 
                   target.classList.contains('hero-subhead') ||
+                  target.classList.contains('hero-support') ||
                   target.classList.contains('hero-ctas') ||
                   target.classList.contains('hero-proof')) {
                 target.classList.add('animate')
@@ -34,8 +135,6 @@ export default function HomePage() {
                 target.classList.add('animate')
               }
             })
-            const heroCard = document.getElementById('heroCard')
-            if (heroCard) heroCard.classList.add('animate')
             
             // Force animate all engagement cards
             const engagementCards = document.querySelectorAll('.engagement-card')
@@ -68,8 +167,6 @@ export default function HomePage() {
             target.classList.add('animate')
           }
         })
-        const heroCard = document.getElementById('heroCard')
-        if (heroCard) heroCard.classList.add('animate')
         
         // Force animate all medora-does blocks
         const medoraBlocks = document.querySelectorAll('.medora-does-block')
@@ -99,6 +196,93 @@ export default function HomePage() {
           el.classList.add('animate')
         })
       }
+      
+      // Set up reality section rail indicator (runs in both vertical and horizontal modes)
+      const setupRealityRail = () => {
+        const realitySection = document.getElementById('reality')
+        if (!realitySection) return
+        
+        const railIndicator = document.getElementById('railIndicator')
+        const railLabels = realitySection.querySelectorAll('.rail-label')
+        const items = realitySection.querySelectorAll('[data-animate="item"]')
+        
+        if (!railIndicator || !railLabels.length || !items.length) return
+        
+        let clickedIndex: number | null = null
+        const indexToStage: { [key: number]: string } = {
+          0: 'DEMO',
+          1: 'PILOT',
+          2: 'PILOT',
+          3: 'USAGE',
+          4: 'USAGE'
+        }
+        
+        const updateRail = (stage: string) => {
+          railIndicator.setAttribute('data-stage', stage)
+          railLabels.forEach((label) => {
+            if (label.getAttribute('data-stage') === stage) {
+              label.classList.add('active')
+            } else {
+              label.classList.remove('active')
+            }
+          })
+        }
+        
+        // Set default state (PILOT)
+        updateRail('PILOT')
+        
+        items.forEach((item, index) => {
+          const stage = item.getAttribute('data-stage') || indexToStage[index]
+          
+          const handleClick = (e: MouseEvent) => {
+            e.preventDefault()
+            e.stopPropagation()
+            items.forEach((i) => i.classList.remove('active'))
+            item.classList.add('active')
+            updateRail(stage)
+            clickedIndex = index
+          }
+          
+          const handleEnter = () => {
+            if (clickedIndex === null) {
+              item.classList.add('active')
+              updateRail(stage)
+            }
+          }
+          
+          const handleLeave = () => {
+            if (clickedIndex !== index) {
+              item.classList.remove('active')
+              if (clickedIndex === null) {
+                updateRail('PILOT')
+              }
+            }
+          }
+          
+          if (item instanceof HTMLElement) {
+            if (item.tagName === 'BUTTON') {
+              item.setAttribute('type', 'button')
+            }
+            item.addEventListener('click', handleClick)
+            item.addEventListener('mouseenter', handleEnter)
+            item.addEventListener('mouseleave', handleLeave)
+            item.addEventListener('focus', () => {
+              item.classList.add('active')
+              updateRail(stage)
+            })
+            item.addEventListener('blur', () => {
+              if (clickedIndex !== index) {
+                item.classList.remove('active')
+              }
+            })
+          }
+        })
+      }
+      
+      // Initialize reality rail after a short delay to ensure DOM is ready
+      setTimeout(() => {
+        setupRealityRail()
+      }, 500)
       
       // Check for vertical mode - if true, DON'T load the scroll script
       const bodyStyles = window.getComputedStyle(document.body)
@@ -142,7 +326,7 @@ export default function HomePage() {
               <div className="hero-content">
                 <p className="hero-eyebrow" data-animate="0">Your product works. Adoption does not.</p>
                 <h1 className="hero-headline" data-animate="1">Adoption engineered for real-world healthcare.</h1>
-                <p className="hero-subhead" data-animate="2">Medora helps healthtech teams convert pilots into daily clinical usage—and usage into revenue and proof investors trust.</p>
+                <p className="hero-support" data-animate="2">For B2B clinical products and B2C and D2C medical products where adoption never becomes routine.</p>
                 <div className="hero-ctas" data-animate="3">
                   <a href="#contact" className="cta-primary magnetic">Start the conversation</a>
                   <a href="#packages" className="cta-secondary magnetic">See how the Adoption Sprint works</a>
@@ -153,23 +337,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="hero-visual">
-                <div className="hero-card" id="heroCard">
-                  <div className="card-title">The Adoption Engine</div>
-                  <div className="card-items">
-                    <div className="card-item">
-                      <div className="item-title">Adoption Diagnosis</div>
-                      <div className="item-description">Identify where usage breaks between demo, pilot, and daily workflow.</div>
-                    </div>
-                    <div className="card-item">
-                      <div className="item-title">Conversion Architecture</div>
-                      <div className="item-description">Design activation + proof moments aligned to clinical reality.</div>
-                    </div>
-                    <div className="card-item">
-                      <div className="item-title">Execution Blueprint</div>
-                      <div className="item-description">A clear plan: what to change, in what order, and which metrics matter.</div>
-                    </div>
-                  </div>
-                </div>
+                <div className="hero-image-wrapper"></div>
               </div>
             </div>
           </div>
@@ -186,33 +354,33 @@ export default function HomePage() {
               <div className="reality-header" data-animate="header">
                 <p className="reality-badge">Reality check</p>
                 <h2 className="reality-title">Most healthtech leaders recognize this reality.</h2>
-                <p className="reality-subtitle">Interest is high. Pilots run. But adoption breaks quietly — and growth stalls.</p>
+                <p className="reality-subtitle">Interest is high. Pilots run. Products launch. Adoption breaks quietly, and growth stalls before teams realize why.</p>
               </div>
               <div className="reality-editorial-grid">
                 <div className="reality-editorial-list">
                   <button className="reality-list-item" data-animate="item" data-index="0" data-stage="DEMO" tabIndex={0}>
                     <span className="reality-item-number">01</span>
-                    <span className="reality-item-text">Sales reports interest but contracts stall.</span>
+                    <span className="reality-item-text">Sales reports strong interest, but no one owns activation after the demo.</span>
                   </button>
                   <div className="reality-item-divider"></div>
                   <button className="reality-list-item" data-animate="item" data-index="1" data-stage="PILOT" tabIndex={0}>
                     <span className="reality-item-number">02</span>
-                    <span className="reality-item-text">Product ships but real world usage is inconsistent.</span>
+                    <span className="reality-item-text">Clinical usage is inconsistent across teams and sites, and pilots stall without a clear path to scale.</span>
                   </button>
                   <div className="reality-item-divider"></div>
                   <button className="reality-list-item" data-animate="item" data-index="2" data-stage="PILOT" tabIndex={0}>
                     <span className="reality-item-number">03</span>
-                    <span className="reality-item-text">Hospitals agree to pilots but internal friction kills momentum.</span>
+                    <span className="reality-item-text">Hospitals agree to continue, but internal ownership remains unclear.</span>
                   </button>
                   <div className="reality-item-divider"></div>
                   <button className="reality-list-item" data-animate="item" data-index="3" data-stage="USAGE" tabIndex={0}>
                     <span className="reality-item-number">04</span>
-                    <span className="reality-item-text">Patients onboard then disappear.</span>
+                    <span className="reality-item-text">Patients onboard or clinicians try the product, then engagement drops.</span>
                   </button>
                   <div className="reality-item-divider"></div>
                   <button className="reality-list-item" data-animate="item" data-index="4" data-stage="USAGE" tabIndex={0}>
                     <span className="reality-item-number">05</span>
-                    <span className="reality-item-text">Investors ask for adoption metrics that are hard to defend.</span>
+                    <span className="reality-item-text">Leadership is asked to defend adoption metrics they do not fully trust.</span>
                   </button>
                 </div>
                 <div className="reality-diagnosis-panel">
@@ -257,7 +425,7 @@ export default function HomePage() {
                 <div className="failure-header" data-animate="header">
                   <p className="failure-badge">Why adoption fails</p>
                   <h2 className="failure-headline">Adoption breaks between intent and workflow.</h2>
-                  <p className="failure-intro">Digital health products fail to scale in predictable ways. The problem isn't demand — it's the missing system that carries adoption from demo to daily use.</p>
+                  <p className="failure-intro">Adoption does not fail randomly. It fails when there is no system carrying intent into routine behavior, for clinicians and for patients.</p>
                 </div>
                 <div className="failure-reasons-list">
                   <ul className="failure-reasons-ul">
@@ -275,8 +443,7 @@ export default function HomePage() {
                           <div className="pipeline-stage-label">DEMO</div>
                           <div className="pipeline-stage-title">Interest without activation</div>
                           <ul className="pipeline-stage-bullets">
-                            <li>Buying intent is validated, but no one owns post-demo activation.</li>
-                            <li>Success is measured in meetings, not behavior change.</li>
+                            <li>Buying intent is validated, but no one owns behavior change after the demo, whether the user is a clinician or a patient.</li>
                           </ul>
                         </div>
                       </div>
@@ -287,8 +454,7 @@ export default function HomePage() {
                           <div className="pipeline-stage-label">PILOT</div>
                           <div className="pipeline-stage-title">Friction kills momentum</div>
                           <ul className="pipeline-stage-bullets">
-                            <li>Clinical, operational, and procurement realities surface late.</li>
-                            <li>Pilots lack a clear path to scale or internal ownership.</li>
+                            <li>Clinical, operational, and trust constraints surface late. Pilots lack a clear path to scale or internal ownership.</li>
                           </ul>
                         </div>
                       </div>
@@ -299,8 +465,7 @@ export default function HomePage() {
                           <div className="pipeline-stage-label">USAGE</div>
                           <div className="pipeline-stage-title">Habits never form</div>
                           <ul className="pipeline-stage-bullets">
-                            <li>Onboarding optimizes first use, not daily repetition.</li>
-                            <li>Without systematic proof, retention and expansion stall.</li>
+                            <li>Onboarding optimizes first use, not repetition. Habits do not form, and sustained usage never stabilizes.</li>
                           </ul>
                         </div>
                       </div>
@@ -318,7 +483,6 @@ export default function HomePage() {
               <div className="medora-does-left">
                 <p className="medora-does-eyebrow">WHAT MEDORA DOES</p>
                 <h2 className="medora-does-headline">Adoption engineered for real-world healthcare.</h2>
-                <p className="medora-does-support">Medora designs adoption and conversion systems for healthtech products.</p>
               </div>
               <div className="medora-does-right">
                 <div className="medora-does-block" data-animate="block">
@@ -338,7 +502,7 @@ export default function HomePage() {
                 <div className="medora-does-divider"></div>
                 <div className="medora-does-block" data-animate="block">
                   <div className="medora-does-block-label">OUTCOME</div>
-                  <p className="medora-does-block-text">We remove the blockers that prevent adoption from turning into revenue and defensible proof.</p>
+                  <p className="medora-does-block-text">The outcome is a repeatable system that turns pilots and launches into routine usage, usage into revenue, and revenue into proof leadership can defend.</p>
                 </div>
               </div>
             </div>
@@ -396,7 +560,7 @@ export default function HomePage() {
                     </div>
                     <div className="card-kicker">STEP 03</div>
                     <h3 className="card-title">Execution Blueprint</h3>
-                    <p className="card-description">Deliver a sequenced plan with owners, priorities, and measurable outcomes.</p>
+                    <p className="card-description" style={{ display: 'block', opacity: 1, visibility: 'visible' }}>A sequenced plan that defines what changes, who owns it, and how adoption success is measured for clinicians or patients.</p>
                     <ul className="card-bullets">
                       <li>What to change, in what order</li>
                       <li>Who owns each action internally</li>
@@ -409,106 +573,61 @@ export default function HomePage() {
           </div>
         </section>
         
-        <section className="section who-section" id="audience">
-          <div className="who-container">
-            <div className="who-grid-12">
-              <div className="who-left" data-animate="panel">
-                <div className="who-panel">
-                  <div className="who-eyebrow">SELF-CHECK</div>
-                  <h2 className="who-headline">Adoption is your bottleneck if…</h2>
-                  <ul className="who-checklist">
-                    <li className="who-checklist-item">
-                      <div className="who-check-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 8 L6 11 L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <span className="who-checklist-text">You win pilots, but usage never becomes routine.</span>
-                    </li>
-                    <div className="who-checklist-divider"></div>
-                    <li className="who-checklist-item">
-                      <div className="who-check-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 8 L6 11 L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <span className="who-checklist-text">Internal hospital friction slows everything down.</span>
-                    </li>
-                    <div className="who-checklist-divider"></div>
-                    <li className="who-checklist-item">
-                      <div className="who-check-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 8 L6 11 L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <span className="who-checklist-text">Stakeholders agree, but ownership is unclear.</span>
-                    </li>
-                    <div className="who-checklist-divider"></div>
-                    <li className="who-checklist-item">
-                      <div className="who-check-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 8 L6 11 L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <span className="who-checklist-text">Patients onboard — then disappear.</span>
-                    </li>
-                    <div className="who-checklist-divider"></div>
-                    <li className="who-checklist-item">
-                      <div className="who-check-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 8 L6 11 L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <span className="who-checklist-text">Investors ask for proof you can't defend yet.</span>
-                    </li>
-                  </ul>
-                  <p className="who-checklist-note">If 2+ are true, Medora can help.</p>
+        <section className="section failure-section" id="audience">
+          <div className="failure-background">
+            <div className="failure-gradient"></div>
+            <div className="failure-grid"></div>
+            <div className="failure-grain"></div>
+          </div>
+          <div className="failure-container">
+            <div className="failure-grid-12">
+              <div className="failure-left">
+                <div className="failure-header" data-animate="header">
+                  <p className="failure-badge">Who Medora Is For</p>
+                  <h2 className="failure-headline">Adoption engineered for real-world healthcare.</h2>
+                </div>
+                <div className="failure-reasons-list">
+                  <div className="who-subsection" data-animate="subsection">
+                  </div>
                 </div>
               </div>
-              <div className="who-right" data-animate="panel">
-                <div className="who-panel">
-                  <div className="who-eyebrow">DELIVERABLES</div>
-                  <h2 className="who-headline">What you get in an Adoption Sprint</h2>
-                  <div className="who-deliverables">
-                    <div className="who-deliverable-item">
-                      <div className="who-deliverable-number">01</div>
-                      <div className="who-deliverable-content">
-                        <div className="who-deliverable-title">Adoption diagnosis</div>
-                        <div className="who-deliverable-desc">Where usage drops between demo, pilot, and daily workflow.</div>
+              <div className="failure-right">
+                <div className="failure-panel-sticky">
+                  <div className="failure-panel" id="whoMedoraForCard">
+                    <div className="failure-panel-title">Who Medora Is For</div>
+                    <div className="failure-pipeline">
+                      <div className="failure-pipeline-stage" data-step="B2B">
+                        <div className="pipeline-stage-badge">1</div>
+                        <div className="pipeline-stage-content">
+                          <div className="pipeline-stage-label">B2B CLINICAL</div>
+                          <div className="pipeline-stage-title">If you build B2C and D2C medical products</div>
+                          <ul className="pipeline-stage-bullets">
+                            <li>Patients onboard, but habits do not form.</li>
+                            <li>Engagement drops after early use.</li>
+                            <li>Usage metrics are hard to defend to partners, payers, or investors.</li>
+                            <li>Growth stalls despite strong early signals.</li>
+                          </ul>
+                        </div>
                       </div>
-                    </div>
-                    <div className="who-deliverable-item">
-                      <div className="who-deliverable-number">02</div>
-                      <div className="who-deliverable-content">
-                        <div className="who-deliverable-title">Conversion architecture</div>
-                        <div className="who-deliverable-desc">Activation + onboarding logic aligned to clinical reality.</div>
-                      </div>
-                    </div>
-                    <div className="who-deliverable-item">
-                      <div className="who-deliverable-number">03</div>
-                      <div className="who-deliverable-content">
-                        <div className="who-deliverable-title">Proof moments</div>
-                        <div className="who-deliverable-desc">A plan for the metrics and evidence that convert pilots.</div>
-                      </div>
-                    </div>
-                    <div className="who-deliverable-item">
-                      <div className="who-deliverable-number">04</div>
-                      <div className="who-deliverable-content">
-                        <div className="who-deliverable-title">Execution blueprint</div>
-                        <div className="who-deliverable-desc">What to change, in what order, and who owns it internally.</div>
+                      <div className="pipeline-divider"></div>
+                      <div className="failure-pipeline-stage" data-step="B2C">
+                        <div className="pipeline-stage-badge">2</div>
+                        <div className="pipeline-stage-content">
+                          <div className="pipeline-stage-label">B2C & D2C</div>
+                          <div className="pipeline-stage-title">If you build B2C and D2C medical products</div>
+                          <ul className="pipeline-stage-bullets">
+                            <li>Patients onboard, but habits do not form.</li>
+                            <li>Engagement drops after early use.</li>
+                            <li>Usage metrics are hard to defend to partners, payers, or investors.</li>
+                            <li>Growth stalls despite strong early signals.</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="who-cta-bar">
-              <p className="who-cta-text">Not sure? Send a 2-minute description of where adoption breaks.</p>
-              <div className="who-cta-buttons">
-                <a href="#contact" className="who-cta-primary">Start the conversation</a>
-              </div>
-            </div>
-            <p className="who-footnote">Best fit: post-pilot or post-launch teams with real market pull.</p>
           </div>
         </section>
         
@@ -569,6 +688,7 @@ export default function HomePage() {
                 </div>
                 <div className="package-deliverables">
                   <span className="package-label">WHAT YOU GET</span>
+                  <p className="package-deliverables-intro">The Adoption Sprint is designed to fix adoption before patterns harden and become difficult to reverse.</p>
                   <ul className="package-bullets">
                     <li>Adoption diagnosis (where usage drops and why)</li>
                     <li>Conversion architecture (activation + onboarding + proof moments)</li>
@@ -630,7 +750,7 @@ export default function HomePage() {
             <div className="grid contact-grid">
               <div className="contact-form-wrapper">
                 <h2 className="contact-headline">Contact Medora</h2>
-                <form className="contact-form" id="contactForm">
+                <form className="contact-form" id="contactForm" action="#" method="post" onSubmit={(e) => e.preventDefault()}>
                   <div className="form-row">
                     <div className="form-group form-group-half">
                       <label htmlFor="name" className="form-label">Name</label>
@@ -653,10 +773,6 @@ export default function HomePage() {
                     <label htmlFor="adoption-breaks" className="form-label">Your message</label>
                     <textarea id="adoption-breaks" name="adoption-breaks" className="form-input form-textarea" rows={6} required></textarea>
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="message" className="form-label">Message</label>
-                    <textarea id="message" name="message" className="form-input form-textarea" rows={5} required></textarea>
-                  </div>
                   <button type="submit" className="form-submit">Start the conversation</button>
                 </form>
               </div>
@@ -665,7 +781,7 @@ export default function HomePage() {
                 <div className="contact-details">
                   <div className="contact-item">
                     <span className="contact-label">Email</span>
-                    <a href="mailto:annasolovyova@gmx.de" className="contact-link">annasolovyova@gmx.de</a>
+                    <a href="mailto:anna.solovyova@medora.agency" className="contact-link">anna.solovyova@medora.agency</a>
                   </div>
                   <div className="contact-item">
                     <span className="contact-label">Phone</span>

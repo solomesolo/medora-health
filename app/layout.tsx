@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import CustomCursor from './components/CustomCursor'
 import Navigation from './components/Navigation'
@@ -27,6 +28,7 @@ export default function RootLayout({
           {children}
           <CookieConsent />
         </PageWrapper>
+        <Script src="/js/responsiveness-checker.js" strategy="lazyOnload" />
       </body>
     </html>
   )

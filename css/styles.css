@@ -343,15 +343,30 @@ a:focus-visible {
    ============================================ */
 
 .hero-section {
-    padding: 5rem 1.5rem;
+    padding: 4.8rem 1.5rem;
     background-color: var(--bg-primary);
+    background-image: url('/images/hero.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
+    z-index: 1;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(47, 59, 52, 0.85);
     z-index: 1;
 }
 
 @media (min-width: 1024px) {
     .hero-section {
-        padding: 7rem 1.5rem;
+        padding: 8rem 1.5rem;
     }
 }
 
@@ -362,13 +377,31 @@ a:focus-visible {
 
 .hero-grid {
     align-items: center;
+    justify-items: center;
+    min-height: 384px;
+}
+
+@media (min-width: 1024px) {
+    .hero-grid {
+        min-height: 448px;
+    }
 }
 
 .hero-content {
-    grid-column: 1 / 7;
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: 2rem;
+    max-width: 900px;
+    margin: 6rem auto 0;
+}
+
+@media (min-width: 1024px) {
+    .hero-content {
+        margin: 8rem auto 0;
+    }
 }
 
 .hero-eyebrow {
@@ -394,6 +427,7 @@ a:focus-visible {
     line-height: 1.2;
     color: var(--text-primary);
     max-width: 100%;
+    text-align: center;
     margin: 0.75rem 0 0 0;
     opacity: 0;
     transform: translateY(14px);
@@ -422,11 +456,29 @@ a:focus-visible {
     transform: translateY(0);
 }
 
+.hero-support {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 90%;
+    margin: 0.5rem auto 0;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.9s ease-out 0.24s, transform 0.9s ease-out 0.24s;
+}
+
+.hero-support.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .hero-ctas {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1.25rem;
+    justify-content: center;
     opacity: 0;
     transform: translateY(14px);
     transition: opacity 0.9s ease-out 0.24s, transform 0.9s ease-out 0.24s;
@@ -476,6 +528,7 @@ a:focus-visible {
 .hero-proof {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 1.5rem;
     margin-top: 1.5rem;
     opacity: 0;
@@ -499,6 +552,7 @@ a:focus-visible {
     font-size: 0.875rem;
     color: var(--text-muted);
     margin: 0;
+    text-align: center;
 }
 
 .hero-visual {
@@ -508,6 +562,10 @@ a:focus-visible {
     justify-content: flex-end;
     height: 100%;
     min-height: 200px;
+}
+
+.hero-image-wrapper {
+    display: none;
 }
 
 .hero-card {
@@ -1362,6 +1420,23 @@ a:focus-visible {
     transform: translateY(0);
 }
 
+.who-subsection {
+    margin-top: 2.5rem;
+}
+
+.who-subsection:first-child {
+    margin-top: 1.5rem;
+}
+
+.who-subsection-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.01em;
+}
+
 .failure-reason-text {
     display: block;
     font-size: 1.125rem;
@@ -2025,12 +2100,25 @@ a:focus-visible {
 
 .medora-does-section {
     background-color: var(--bg-primary);
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 6rem 0 !important;
+    padding-top: calc(4rem + 2rem) !important;
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 1 !important;
 }
 
 .medora-does-container {
     max-width: 1152px;
     margin: 0 auto;
     padding: 6rem 1.5rem;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 @media (min-width: 1024px) {
@@ -2040,15 +2128,21 @@ a:focus-visible {
 }
 
 .medora-does-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 3rem 3rem;
-    align-items: start;
+    display: grid !important;
+    grid-template-columns: repeat(12, 1fr) !important;
+    gap: 3rem 3rem !important;
+    align-items: start !important;
+    width: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Left Column */
 .medora-does-left {
     grid-column: 1 / -1;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 @media (min-width: 1024px) {
@@ -2074,6 +2168,13 @@ a:focus-visible {
     margin: 0;
     letter-spacing: -0.02em;
     font-family: Georgia, serif;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    filter: none !important;
+    position: relative !important;
+    z-index: 1 !important;
 }
 
 .medora-does-support {
@@ -2081,6 +2182,16 @@ a:focus-visible {
     line-height: 1.6;
     color: rgba(243, 241, 236, 0.7);
     margin: 1.5rem 0 0 0;
+}
+
+.medora-does-intro {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(243, 241, 236, 0.75);
+    margin: 1.5rem 0 0 0;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
 }
 
 /* Right Column */
@@ -2160,8 +2271,19 @@ a:focus-visible {
     line-height: 1.2;
     color: var(--text-primary);
     text-align: center;
-    margin: 0;
+    margin: 0 0 1rem 0;
     letter-spacing: -0.02em;
+}
+
+.engagement-intro {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(243, 241, 236, 0.75);
+    margin: 0 0 2rem 0;
+    max-width: 48rem;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .engagement-cards-wrapper {
@@ -2914,6 +3036,14 @@ a:focus-visible {
     margin-bottom: 1rem;
 }
 
+.package-deliverables-intro {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: rgba(243, 241, 236, 0.75);
+    margin: 0.75rem 0 1rem 0;
+    font-style: italic;
+}
+
 .package-label {
     display: block;
     font-size: 0.75rem;
@@ -3202,6 +3332,50 @@ a:focus-visible {
     outline-offset: 4px;
 }
 
+.form-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.form-confirmation {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: rgba(95, 125, 115, 0.2);
+    border: 1px solid rgba(95, 125, 115, 0.4);
+    border-radius: 0.75rem;
+    animation: fadeIn 0.5s ease-in;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative;
+    z-index: 10;
+}
+
+.form-confirmation-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.form-confirmation-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .contact-details {
     display: flex;
     flex-direction: column;
@@ -3286,7 +3460,7 @@ a:focus-visible {
     }
 
     .hero-section {
-        padding: 4rem 1.5rem;
+        padding: 2.56rem 1.5rem;
     }
 
     .hero-grid {

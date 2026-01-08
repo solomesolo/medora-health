@@ -27,6 +27,7 @@
     "rehype-sanitize": "^6.0.0",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
+    "resend": "^6.6.0",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

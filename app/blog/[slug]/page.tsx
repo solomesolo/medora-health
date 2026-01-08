@@ -98,7 +98,7 @@ export default async function BlogPostPage({
   const canonicalUrl = `${siteUrl}/blog/${post.slug}`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-[#2F3B34]">
       {/* Hero Section with Cover Image */}
       {post.coverImage && (
         <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
@@ -108,113 +108,133 @@ export default async function BlogPostPage({
               alt={post.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2F3B34] via-[#2F3B34]/80 to-[#2F3B34]/40"></div>
           </div>
         </div>
       )}
 
       <article className="relative">
-        <div className="container mx-auto px-6 py-16 max-w-4xl">
+        <div className="mx-auto max-w-4xl pl-12 pr-6 pt-24 pb-20 lg:pl-20 lg:pr-12 lg:pt-32 lg:pb-28">
           {/* Back Button */}
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-emerald-400 transition-colors duration-300 mb-8 group"
+            className="inline-flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors duration-300 mb-16 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
             <span className="font-medium">Back to blog</span>
           </Link>
 
           {/* Article Header */}
-          <header className="mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium mb-6">
+          <header className="mb-20">
+            <div className="text-xs uppercase tracking-widest text-[#5F7D73] mb-8 font-medium">
               {post.category}
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-12 text-white/90 leading-tight font-serif">
               {post.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-6 text-slate-400 mb-8">
+            <div className="flex flex-wrap items-center gap-6 text-white/50 mb-12">
               <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-emerald-400" />
-                <span className="text-emerald-400 font-medium">{post.author}</span>
+                <User className="w-4 h-4 text-white/40" />
+                <span className="font-medium text-white/60">{post.author}</span>
               </div>
               {post.publishedAt && (
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="w-5 h-5" />
-                  <time dateTime={post.publishedAt.toISOString()}>
-                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </time>
-                </div>
+                <>
+                  <span className="text-white/30">•</span>
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="w-4 h-4 text-white/40" />
+                    <time dateTime={post.publishedAt.toISOString()} className="text-white/50">
+                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </time>
+                  </div>
+                </>
               )}
+              <span className="text-white/30">•</span>
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                <span>{readingTime} min read</span>
+                <Clock className="w-4 h-4 text-white/40" />
+                <span className="text-white/50">{readingTime} min read</span>
               </div>
             </div>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+            <div 
+              className="h-px" 
+              style={{ 
+                background: 'linear-gradient(to right, transparent, rgba(243, 241, 236, 0.1), transparent)',
+                opacity: 0.5,
+                filter: 'blur(0.5px)'
+              }}
+            />
           </header>
 
           {/* Article Content */}
           <div className="prose prose-invert prose-lg max-w-none 
-            prose-headings:text-white prose-headings:font-bold
-            prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
-            prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10
-            prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
-            prose-p:text-slate-300 prose-p:leading-relaxed prose-p:mb-6
-            prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:text-emerald-300 hover:prose-a:underline
+            prose-headings:text-white prose-headings:font-semibold prose-headings:font-serif
+            prose-h1:text-4xl prose-h1:mb-8 prose-h1:mt-16 prose-h1:leading-tight
+            prose-h2:text-3xl prose-h2:mb-6 prose-h2:mt-14 prose-h2:leading-tight
+            prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-12 prose-h3:leading-tight
+            prose-p:text-white/70 prose-p:leading-relaxed prose-p:mb-8 prose-p:text-base
+            prose-a:text-[#5F7D73] prose-a:no-underline hover:prose-a:text-[#7A9B8F] hover:prose-a:underline
             prose-strong:text-white prose-strong:font-semibold
-            prose-code:text-emerald-400 prose-code:bg-slate-800/50 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-            prose-pre:bg-slate-900/50 prose-pre:border prose-pre:border-slate-700/50 prose-pre:rounded-xl prose-pre:p-6
-            prose-blockquote:border-l-4 prose-blockquote:border-emerald-500/50 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-slate-400
-            prose-ul:list-disc prose-ol:list-decimal
-            prose-li:text-slate-300 prose-li:mb-2
-            prose-img:rounded-xl prose-img:shadow-2xl prose-img:my-8
-            prose-hr:border-slate-700 prose-hr:my-12
-            mb-16">
+            prose-code:text-[#5F7D73] prose-code:bg-white/[0.05] prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:border prose-code:border-white/10
+            prose-pre:bg-white/[0.03] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-pre:p-8
+            prose-blockquote:border-l-4 prose-blockquote:border-[#5F7D73]/50 prose-blockquote:pl-8 prose-blockquote:italic prose-blockquote:text-white/60 prose-blockquote:my-10
+            prose-ul:list-disc prose-ol:list-decimal prose-ul:pl-6 prose-ol:pl-6
+            prose-li:text-white/70 prose-li:mb-3 prose-li:leading-relaxed
+            prose-img:rounded-xl prose-img:shadow-2xl prose-img:my-12
+            prose-hr:border-white/10 prose-hr:my-16
+            mb-20">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {post.content}
             </ReactMarkdown>
           </div>
 
           {/* Share Buttons */}
-          <ShareButtons url={canonicalUrl} title={post.title} />
+          <div className="mt-20">
+            <ShareButtons url={canonicalUrl} title={post.title} />
+          </div>
 
           {/* Related Posts */}
           {relatedPosts.length > 0 && (
-            <div className="mt-24 pt-16 border-t border-slate-800/50">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent flex-1"></div>
-                <h2 className="text-2xl font-bold text-white">Related Articles</h2>
-                <div className="h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent flex-1"></div>
-              </div>
-              <div className="grid md:grid-cols-3 gap-6">
+            <div className="mt-32 pt-20">
+              <div 
+                className="h-px mb-16" 
+                style={{ 
+                  background: 'linear-gradient(to right, transparent, rgba(243, 241, 236, 0.1), transparent)',
+                  opacity: 0.5,
+                  filter: 'blur(0.5px)'
+                }}
+              />
+              <h2 className="text-3xl font-semibold text-white/90 mb-12 font-serif">Related Articles</h2>
+              <div className="grid md:grid-cols-3 gap-8">
                 {relatedPosts.map((related) => (
                   <Link
                     key={related.id}
                     href={`/blog/${related.slug}`}
-                    className="group block overflow-hidden rounded-xl bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm border border-slate-700/30 hover:border-emerald-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1"
+                    className="group block overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur hover:bg-white/[0.05] hover:border-white/18 transition-all duration-300"
                   >
                     {related.coverImage && (
-                      <div className="relative h-40 overflow-hidden">
+                      <div className="relative h-48 overflow-hidden">
                         <img
                           src={related.coverImage}
                           alt={related.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#2F3B34]/80 via-[#2F3B34]/20 to-transparent"></div>
                       </div>
                     )}
                     <div className="p-6">
-                      <h3 className="font-bold mb-2 text-white group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2">
+                      <div className="text-xs uppercase tracking-widest text-[#5F7D73] mb-3 font-medium">
+                        {related.category}
+                      </div>
+                      <h3 className="text-lg font-semibold mb-3 text-white/90 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-tight">
                         {related.title}
                       </h3>
-                      <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-white/60 line-clamp-2 leading-relaxed">
                         {related.excerpt}
                       </p>
                     </div>

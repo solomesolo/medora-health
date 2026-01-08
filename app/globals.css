@@ -2,8 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar for carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Import existing styles */
 @import '../css/styles.css';
+
+/* Blog page isolation - prevent legacy CSS from affecting blog layout */
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] {
+  /* Isolate blog page from global styles */
+}
+
+/* Force blog cards to be proper cards, not bands */
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] a[class*="rounded-3xl"],
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] a[class*="rounded-2xl"] {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure blog grid items are full width */
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] .grid[class*="grid-cols"] > * {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove any hr or divider lines inside blog cards */
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] a[class*="rounded"] hr,
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] a[class*="rounded"] .border-b {
+  display: none !important;
+}
+
+/* Ensure images always show */
+main[class*="relative"][class*="bg-\\[#2F3B34\\]"] img {
+  display: block !important;
+  max-width: 100% !important;
+}
+
+/* Blog page - no special padding needed, using standard max-w-6xl with px-6 */
 
 /* Custom blog typography enhancements */
 @layer utilities {
@@ -230,6 +280,41 @@ html {
   filter: blur(0) !important;
 }
 
+/* Ensure the entire section and containers are visible */
+.medora-does-section,
+section.medora-does-section,
+section#solution {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  min-height: auto !important;
+  padding: 6rem 0 !important;
+  padding-top: calc(4rem + 2rem) !important;
+  overflow: visible !important;
+  z-index: 1 !important;
+}
+
+.medora-does-container {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  max-width: 1152px !important;
+  margin: 0 auto !important;
+  padding: 6rem 1.5rem !important;
+}
+
+.medora-does-grid {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: grid !important;
+  grid-template-columns: repeat(12, 1fr) !important;
+  gap: 3rem 3rem !important;
+  align-items: start !important;
+  width: 100% !important;
+}
+
 .medora-does-section .medora-does-block,
 .solution-section .medora-does-block {
   opacity: 1 !important;
@@ -264,11 +349,35 @@ html {
 .medora-does-section .medora-does-eyebrow,
 .medora-does-section .medora-does-headline,
 .medora-does-section .medora-does-support,
+.medora-does-section .medora-does-intro,
 .medora-does-section .medora-does-block-label,
 .medora-does-section .medora-does-block-text {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
+}
+
+/* Explicitly ensure headline is visible with highest specificity */
+.medora-does-section .medora-does-left .medora-does-headline,
+.solution-section .medora-does-left .medora-does-headline,
+section.medora-does-section .medora-does-left .medora-does-headline,
+section#solution .medora-does-left .medora-does-headline,
+h2.medora-does-headline,
+.medora-does-headline {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: none !important;
+  filter: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+  color: var(--text-primary) !important;
+  font-size: clamp(2rem, 4vw, 3rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  letter-spacing: -0.02em !important;
+  font-family: Georgia, serif !important;
 }
 
 .medora-does-section .medora-does-divider {
@@ -319,6 +428,12 @@ html {
 }
 
 .engagement-section .engagement-headline {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.engagement-section .engagement-intro {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;

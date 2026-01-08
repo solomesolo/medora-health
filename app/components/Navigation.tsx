@@ -10,11 +10,6 @@ export default function Navigation() {
 
   useEffect(() => {
     // Determine active section based on pathname
-    if (pathname === '/blog' || pathname?.startsWith('/blog/')) {
-      setActiveSection('blog')
-      return
-    }
-    
     if (pathname !== '/') {
       setActiveSection('')
       return
@@ -53,25 +48,39 @@ export default function Navigation() {
   }, [pathname])
 
   const navItems = [
-    { href: '/#hero', target: 'hero', label: 'Hero' },
-    { href: '/#reality', target: 'reality', label: 'Reality' },
-    { href: '/#failure', target: 'failure', label: 'Why It Fails' },
-    { href: '/#solution', target: 'solution', label: 'What We Do' },
-    { href: '/#engagement', target: 'engagement', label: 'Engagement' },
-    { href: '/#audience', target: 'audience', label: "Who It's For" },
-    { href: '/#founder', target: 'founder', label: 'Founder' },
-    { href: '/#packages', target: 'packages', label: 'Packages' },
-    { href: '/blog', target: 'blog', label: 'Blog' },
-    { href: '/#contact', target: 'contact', label: 'Contact' },
+    { href: '/#hero', target: 'hero', label: 'Hero', external: false },
+    { href: '/#reality', target: 'reality', label: 'Reality', external: false },
+    { href: '/#failure', target: 'failure', label: 'Why It Fails', external: false },
+    { href: '/#solution', target: 'solution', label: 'What We Do', external: false },
+    { href: '/#engagement', target: 'engagement', label: 'Engagement', external: false },
+    { href: '/#audience', target: 'audience', label: "Who It's For", external: false },
+    { href: '/#founder', target: 'founder', label: 'Founder', external: false },
+    { href: '/#packages', target: 'packages', label: 'Packages', external: false },
+    { href: 'https://substack.com/@medoraagency', target: 'blog', label: 'Blog', external: true },
+    { href: 'https://www.eventbrite.co.uk/o/medora-health-120819087631', target: 'events', label: 'Events', external: true },
+    { href: '/#contact', target: 'contact', label: 'Contact', external: false },
   ]
 
   return (
     <nav className="top-navigation" role="navigation" aria-label="Main navigation">
       <div className="nav-container">
         {navItems.map((item) => {
-          const isActive = activeSection === item.target || 
-            (pathname === '/blog' && item.target === 'blog') ||
-            (pathname?.startsWith('/blog/') && item.target === 'blog')
+          const isActive = activeSection === item.target
+          
+          if (item.external) {
+            return (
+              <a
+                key={item.target}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                data-target={item.target}
+              >
+                {item.label}
+              </a>
+            )
+          }
           
           return (
             <Link

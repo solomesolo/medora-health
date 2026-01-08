@@ -872,49 +872,214 @@
 (function() {
     'use strict';
 
-    const contactForm = document.getElementById('contactForm');
-    if (!contactForm) return;
+    let contactForm = null;
+
+    /**
+     * Show confirmation message
+     */
+    function showConfirmation() {
+        console.log('Showing confirmation message...');
+        
+        // Get form wrapper
+        const formWrapper = contactForm.closest('.contact-form-wrapper');
+        if (!formWrapper) {
+            console.error('Form wrapper not found');
+            return;
+        }
+        
+        // Remove existing confirmation if any
+        const existingConfirmation = formWrapper.querySelector('.form-confirmation');
+        if (existingConfirmation) {
+            existingConfirmation.remove();
+        }
+
+        // Hide form with smooth transition
+        contactForm.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+        contactForm.style.opacity = '0';
+        contactForm.style.visibility = 'hidden';
+        contactForm.style.height = '0';
+        contactForm.style.overflow = 'hidden';
+        contactForm.style.margin = '0';
+        contactForm.style.padding = '0';
+        
+        // Create confirmation message
+        const confirmation = document.createElement('div');
+        confirmation.className = 'form-confirmation';
+        confirmation.style.cssText = `
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: rgba(95, 125, 115, 0.25);
+            border: 2px solid rgba(95, 125, 115, 0.5);
+            border-radius: 0.75rem;
+            position: relative;
+            z-index: 100;
+        `;
+        confirmation.innerHTML = `
+            <div class="form-confirmation-content">
+                <p class="form-confirmation-text" style="font-size: 1.125rem; line-height: 1.6; color: var(--text-primary); margin: 0; font-weight: 500;">
+                    We have got your request, our team will contact you soon.
+                </p>
+            </div>
+        `;
+        
+        // Insert after form (inside form wrapper)
+        contactForm.insertAdjacentElement('afterend', confirmation);
+        
+        // Reset form
+        contactForm.reset();
+        
+        // Force visibility
+        setTimeout(() => {
+            confirmation.style.display = 'block';
+            confirmation.style.opacity = '1';
+            confirmation.style.visibility = 'visible';
+            
+            // Scroll to keep confirmation in view, but don't jump
+            const formRect = formWrapper.getBoundingClientRect();
+            const confirmationRect = confirmation.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            // Only scroll if confirmation is below viewport
+            if (confirmationRect.bottom > viewportHeight) {
+                const scrollAmount = confirmationRect.top - (viewportHeight / 2);
+                window.scrollBy({
+                    top: scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        }, 50);
+    }
 
     /**
      * Handle form submission
      */
-    function handleSubmit(e) {
-        e.preventDefault();
+    async function handleSubmit(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+        }
         
-        // Get form data
-        const formData = new FormData(contactForm);
-        const data = Object.fromEntries(formData);
+        console.log('Form submitted, preventing default behavior');
         
-        // In a real implementation, you would send this to a server
-        // For now, we'll use mailto as a fallback
-        const email = 'annasolovyova@gmx.de';
-        const subject = encodeURIComponent(`Contact from ${data.name} at ${data.company}`);
-        const body = encodeURIComponent(
-            `Name: ${data.name}\n` +
-            `Company: ${data.company}\n` +
-            `Role: ${data.role}\n` +
-            `Email: ${data.email}\n` +
-            `Product Stage: ${data['product-stage']}\n` +
-            `Where Adoption Breaks: ${data['adoption-breaks']}\n\n` +
-            `Message:\n${data.message}`
-        );
+        // Re-find form in case DOM changed
+        if (!contactForm) {
+            contactForm = document.getElementById('contactForm');
+        }
         
-        // Open mailto link
-        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        if (!contactForm) {
+            console.error('Contact form not found');
+            alert('Form not found. Please refresh the page.');
+            return false;
+        }
+        
+        // Save current scroll position
+        const scrollY = window.scrollY;
+        const scrollX = window.scrollX;
+        
+        // Get submit button
+        const submitButton = contactForm.querySelector('.form-submit');
+        if (!submitButton) {
+            console.error('Submit button not found');
+            return false;
+        }
+        
+        const originalText = submitButton.textContent;
+        
+        // Disable button and show loading state
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+        
+        try {
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+            
+            console.log('Sending form data:', data);
+            
+            // Send to API
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            console.log('API response:', result);
+
+            if (response.ok && result.success) {
+                // Maintain scroll position
+                window.scrollTo(scrollX, scrollY);
+                
+                // Show confirmation message
+                showConfirmation();
+                
+                console.log('Form submitted successfully, confirmation shown');
+            } else {
+                throw new Error(result.error || 'Failed to send message');
+            }
+        } catch (error) {
+            console.error('Form submission error:', error);
+            // Restore scroll position
+            window.scrollTo(scrollX, scrollY);
+            alert('Sorry, there was an error sending your message. Please try again or contact us directly at anna.solovyova@medora.agency');
+        } finally {
+            // Re-enable button
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        }
+        
+        return false;
     }
 
     /**
      * Initialize contact form
      */
     function init() {
+        // Find form - try multiple times if needed
+        contactForm = document.getElementById('contactForm');
+        
+        if (!contactForm) {
+            console.warn('Contact form not found, retrying...');
+            // Retry after a short delay
+            setTimeout(init, 100);
+            return;
+        }
+
+        console.log('Contact form found, attaching submit handler');
+        
+        // Remove any existing listeners
+        const newForm = contactForm.cloneNode(true);
+        contactForm.parentNode.replaceChild(newForm, contactForm);
+        contactForm = newForm;
+        
+        // Attach submit handler
         contactForm.addEventListener('submit', handleSubmit);
+        
+        // Also attach click handler to button as backup
+        const submitButton = contactForm.querySelector('.form-submit');
+        if (submitButton) {
+            submitButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSubmit(e);
+            });
+        }
+        
+        console.log('Contact form handler initialized');
     }
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
-        init();
+        // Wait a bit for Next.js hydration
+        setTimeout(init, 100);
     }
 })();
 
@@ -1077,11 +1242,20 @@
         const railIndicator = document.getElementById('railIndicator');
         const railLabels = realitySection.querySelectorAll('.rail-label');
         
-        if (!railIndicator || !railLabels.length || !items.length) return;
+        console.log('Setting up reality rail:', {
+            railIndicator: !!railIndicator,
+            railLabels: railLabels.length,
+            items: items.length
+        });
+        
+        if (!railIndicator || !railLabels.length || !items.length) {
+            console.warn('Reality rail setup failed - missing elements');
+            return;
+        }
         
         // Default stage (PILOT)
         let activeStage = 'PILOT';
-        let activeIndex = null;
+        let clickedIndex = null; // Track which item was clicked
         
         // Map item index to stage
         const indexToStage = {
@@ -1113,26 +1287,61 @@
         
         // Handle left item interactions
         items.forEach((item, index) => {
+            const stage = item.getAttribute('data-stage') || indexToStage[index];
+            
             const handleEnter = () => {
-                const stage = item.getAttribute('data-stage') || indexToStage[index];
-                if (stage) {
+                // On hover, preview the stage (unless an item is clicked)
+                if (clickedIndex === null) {
                     item.classList.add('active');
                     updateRail(stage);
-                    activeIndex = index;
                 }
             };
             
             const handleLeave = () => {
-                item.classList.remove('active');
-                // Reset to default stage
-                updateRail('PILOT');
-                activeIndex = null;
+                // Only remove active on leave if this item wasn't clicked
+                if (clickedIndex !== index) {
+                    item.classList.remove('active');
+                    // If no item is clicked, reset to default stage
+                    if (clickedIndex === null) {
+                        updateRail('PILOT');
+                    }
+                }
             };
+            
+            const handleClick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Reality item clicked:', index, 'stage:', stage);
+                // Remove active from all items
+                items.forEach(i => i.classList.remove('active'));
+                // Add active to clicked item
+                item.classList.add('active');
+                updateRail(stage);
+                clickedIndex = index;
+                console.log('Rail updated to stage:', stage);
+            };
+            
+            // Make sure item is clickable
+            if (item.tagName === 'BUTTON') {
+                item.setAttribute('type', 'button');
+            }
             
             item.addEventListener('mouseenter', handleEnter);
             item.addEventListener('mouseleave', handleLeave);
-            item.addEventListener('focus', handleEnter);
-            item.addEventListener('blur', handleLeave);
+            item.addEventListener('click', handleClick);
+            // Also handle mousedown for better responsiveness
+            item.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+            item.addEventListener('focus', () => {
+                item.classList.add('active');
+                updateRail(stage);
+            });
+            item.addEventListener('blur', () => {
+                if (clickedIndex !== index) {
+                    item.classList.remove('active');
+                }
+            });
         });
     }
 
