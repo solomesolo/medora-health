@@ -45,3 +45,4 @@ Emails will be sent to: **anna.solovyova@medora.agency**
 - Add the DNS records they provide
 - Change `RESEND_FROM_EMAIL` to `contact@medora.agency`
 
+

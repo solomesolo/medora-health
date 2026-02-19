@@ -136,3 +136,4 @@ The API route now includes detailed logging. Check Vercel function logs for:
 - [ ] Checked Resend dashboard for sent/failed emails
 - [ ] Tested with curl or form submission
 
+

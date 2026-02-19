@@ -72,3 +72,4 @@ If you prefer a different service, you can modify `/app/api/contact/route.ts` to
 - **Nodemailer**: Requires SMTP credentials
 - **AWS SES**: Requires AWS account setup
 
+

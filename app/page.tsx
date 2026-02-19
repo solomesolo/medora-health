@@ -3,6 +3,11 @@
 import { useEffect } from 'react'
 import Script from 'next/script'
 import Link from 'next/link'
+import FrictionMirrorSection from './components/FrictionMirrorSection'
+import BehavioralDriftSection from './components/BehavioralDriftSection'
+import ScrollyStepsSection from './components/ScrollyStepsSection'
+import OutcomesSection from './components/OutcomesSection'
+import ServicesSection from './components/ServicesSection'
 
 export default function HomePage() {
   useEffect(() => {
@@ -122,12 +127,16 @@ export default function HomePage() {
             const animateElements = document.querySelectorAll('[data-animate]')
             animateElements.forEach((el) => {
               const target = el as HTMLElement
-              if (target.classList.contains('hero-eyebrow') || 
+              if (target.classList.contains('hero-support-line') || 
                   target.classList.contains('hero-headline') || 
-                  target.classList.contains('hero-subhead') ||
-                  target.classList.contains('hero-support') ||
+                  target.classList.contains('hero-subheadline') ||
+                  target.classList.contains('hero-signals') ||
                   target.classList.contains('hero-ctas') ||
-                  target.classList.contains('hero-proof')) {
+                  target.classList.contains('reality-title') ||
+                  target.classList.contains('reality-intro') ||
+                  target.classList.contains('reality-research-block') ||
+                  target.classList.contains('reality-emphasis-block') ||
+                  target.classList.contains('reality-closing')) {
                 target.classList.add('animate')
               }
               // Add animate class to engagement cards
@@ -151,11 +160,16 @@ export default function HomePage() {
         const animateElements = document.querySelectorAll('[data-animate]')
         animateElements.forEach((el) => {
           const target = el as HTMLElement
-          if (target.classList.contains('hero-eyebrow') || 
+          if (target.classList.contains('hero-support-line') || 
               target.classList.contains('hero-headline') || 
-              target.classList.contains('hero-subhead') ||
+              target.classList.contains('hero-subheadline') ||
+              target.classList.contains('hero-signals') ||
               target.classList.contains('hero-ctas') ||
-              target.classList.contains('hero-proof')) {
+              target.classList.contains('reality-title') ||
+              target.classList.contains('reality-intro') ||
+              target.classList.contains('reality-research-block') ||
+              target.classList.contains('reality-emphasis-block') ||
+              target.classList.contains('reality-closing')) {
             target.classList.add('animate')
           }
           // Add animate class to all medora-does blocks
@@ -321,97 +335,89 @@ export default function HomePage() {
       <a href="#hero" className="skip-link">Skip to main content</a>
       <main className="horizontal-scroll-container" role="main" aria-label="Medora website content" style={{ display: 'block' }}>
         <section className="section hero-section" id="hero" aria-label="Hero section">
-          <div className="container">
-            <div className="grid hero-grid">
-              <div className="hero-content">
-                <p className="hero-eyebrow" data-animate="0">Your product works. Adoption does not.</p>
-                <h1 className="hero-headline" data-animate="1">Adoption engineered for real-world healthcare.</h1>
-                <p className="hero-support" data-animate="2">For B2B clinical products and B2C and D2C medical products where adoption never becomes routine.</p>
-                <div className="hero-ctas" data-animate="3">
-                  <a href="#contact" className="cta-primary magnetic">Start the conversation</a>
-                  <a href="#packages" className="cta-secondary magnetic">See how the Adoption Sprint works</a>
-                </div>
-                <div className="hero-proof" data-animate="4">
-                  <div className="proof-divider"></div>
-                  <p className="proof-text">Trusted by teams navigating hospital workflows, procurement reality, and clinical adoption.</p>
-                </div>
-              </div>
-              <div className="hero-visual">
-                <div className="hero-image-wrapper"></div>
-              </div>
-            </div>
+          <div className="hero-background">
+            <div className="hero-gradient"></div>
+            <div className="hero-noise"></div>
+            <div className="hero-radial-glow"></div>
           </div>
-        </section>
-        
-        <section className="section reality-section" id="reality">
-          <div className="reality-background">
-            <div className="reality-gradient"></div>
-            <div className="reality-grid"></div>
-            <div className="reality-grain"></div>
-          </div>
-          <div className="container">
-            <div className="reality-content">
-              <div className="reality-header" data-animate="header">
-                <p className="reality-badge">Reality check</p>
-                <h2 className="reality-title">Most healthtech leaders recognize this reality.</h2>
-                <p className="reality-subtitle">Interest is high. Pilots run. Products launch. Adoption breaks quietly, and growth stalls before teams realize why.</p>
-              </div>
-              <div className="reality-editorial-grid">
-                <div className="reality-editorial-list">
-                  <button className="reality-list-item" data-animate="item" data-index="0" data-stage="DEMO" tabIndex={0}>
-                    <span className="reality-item-number">01</span>
-                    <span className="reality-item-text">Sales reports strong interest, but no one owns activation after the demo.</span>
-                  </button>
-                  <div className="reality-item-divider"></div>
-                  <button className="reality-list-item" data-animate="item" data-index="1" data-stage="PILOT" tabIndex={0}>
-                    <span className="reality-item-number">02</span>
-                    <span className="reality-item-text">Clinical usage is inconsistent across teams and sites, and pilots stall without a clear path to scale.</span>
-                  </button>
-                  <div className="reality-item-divider"></div>
-                  <button className="reality-list-item" data-animate="item" data-index="2" data-stage="PILOT" tabIndex={0}>
-                    <span className="reality-item-number">03</span>
-                    <span className="reality-item-text">Hospitals agree to continue, but internal ownership remains unclear.</span>
-                  </button>
-                  <div className="reality-item-divider"></div>
-                  <button className="reality-list-item" data-animate="item" data-index="3" data-stage="USAGE" tabIndex={0}>
-                    <span className="reality-item-number">04</span>
-                    <span className="reality-item-text">Patients onboard or clinicians try the product, then engagement drops.</span>
-                  </button>
-                  <div className="reality-item-divider"></div>
-                  <button className="reality-list-item" data-animate="item" data-index="4" data-stage="USAGE" tabIndex={0}>
-                    <span className="reality-item-number">05</span>
-                    <span className="reality-item-text">Leadership is asked to defend adoption metrics they do not fully trust.</span>
-                  </button>
+          <div className="container hero-container">
+            <div className="hero-grid-12">
+              <div className="hero-content-left">
+                <p className="hero-support-line" data-animate="0">Behavioral & Emotional Design for Healthcare</p>
+                <h1 className="hero-headline" data-animate="1">Designing Medical Products<br/>People Trust, Adopt,<br/>and Keep Using</h1>
+                <p className="hero-subheadline" data-animate="2">Medora helps medical and healthcare companies uncover and resolve the behavioral and emotional barriers that determine product engagement, adherence, and long-term adoption — across both B2B and B2C environments.</p>
+                <div className="hero-signals" data-animate="3">
+                  <span className="hero-signal-item">Product Engagement & Adoption Strategy</span>
+                  <span className="hero-signal-separator">•</span>
+                  <span className="hero-signal-item">Behavioral & Cognitive Friction Diagnosis</span>
+                  <span className="hero-signal-separator">•</span>
+                  <span className="hero-signal-item">Healthcare UX & Experience Design</span>
+                  <span className="hero-signal-separator">•</span>
+                  <span className="hero-signal-item">Projects</span>
+                  <span className="hero-signal-separator">•</span>
+                  <span className="hero-signal-item">Consulting</span>
+                  <span className="hero-signal-separator">•</span>
+                  <span className="hero-signal-item">Events</span>
                 </div>
-                <div className="reality-diagnosis-panel">
-                  <div className="diagnosis-panel-sticky">
-                    <div className="diagnosis-panel">
-                      <div className="diagnosis-label">DIAGNOSIS</div>
-                      <h3 className="diagnosis-statement">Adoption is the bottleneck.</h3>
-                      <p className="diagnosis-support">Not demand. Not features.</p>
-                      <p className="diagnosis-support">It breaks between intent and workflow.</p>
-                      <div className="diagnosis-rail">
-                        <div className="rail-line"></div>
-                        <div className="rail-indicator" id="railIndicator"></div>
-                        <div className="rail-labels">
-                          <div className="rail-label" data-stage="DEMO">
-                            <span className="label-text">DEMO</span>
-                          </div>
-                          <div className="rail-label" data-stage="PILOT">
-                            <span className="label-text">PILOT</span>
-                          </div>
-                          <div className="rail-label" data-stage="USAGE">
-                            <span className="label-text">USAGE</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <div className="hero-ctas" data-animate="4">
+                  <a href="#contact" className="cta-primary magnetic">Discuss Your Product Challenges</a>
+                  <a href="#packages" className="cta-secondary magnetic">Explore Our Approach</a>
+                </div>
+              </div>
+              <div className="hero-visual-right">
+                <div className="hero-visual-anchor">
+                  <div className="hero-visual-glow"></div>
+                  <div className="hero-visual-shape">
+                    <div className="hero-visual-layer hero-visual-layer-1"></div>
+                    <div className="hero-visual-layer hero-visual-layer-2"></div>
+                    <div className="hero-visual-layer hero-visual-layer-3"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
+        
+        <ScrollyStepsSection
+          id="engagement-reality"
+          title="The Engagement Problem Most Healthcare Products Underestimate"
+          ctaText="Explore Our Approach"
+          ctaHref="#packages"
+          steps={[
+            {
+              number: '01',
+              title: 'Functionality isn\'t the issue',
+              body: 'Across digital health solutions, medical devices, and healthcare platforms, product failure is rarely driven by lack of functionality.',
+              visualKey: 'functionality'
+            },
+            {
+              number: '02',
+              title: 'Human behavior drives outcomes',
+              body: 'It is driven by human behavior. Initial product adoption shows promise, but then behavior shifts. Usage patterns become inconsistent, adherence metrics decline gradually, and engagement drop-off accelerates without clear triggers.',
+              visualKey: 'behavior'
+            },
+            {
+              number: '03',
+              title: 'The pattern shows up everywhere',
+              body: 'Industry research and adoption patterns consistently show: A significant portion of healthcare products struggle to maintain active usage beyond initial onboarding. Patient adherence and sustained engagement remain persistent challenges. Engagement drop-off is one of the most expensive yet least diagnosed product risks. Increased marketing investment often fails to correct behavioral friction.',
+              visualKey: 'pattern'
+            },
+            {
+              number: '04',
+              title: 'The underlying truths',
+              body: 'Users do not behave as product logic assumes. Attention is fragile, trust is conditional. More features rarely repair disengagement. Marketing cannot compensate for structural experience problems. Without addressing behavioral and emotional drivers, even well-engineered products quietly lose adoption momentum.',
+              visualKey: 'truths'
+            }
+          ]}
+        />
+        
+        <FrictionMirrorSection />
+        
+        <BehavioralDriftSection />
+        
+        <OutcomesSection />
+        
+        <ServicesSection />
         
         <section className="section failure-section" id="failure">
           <div className="failure-background">

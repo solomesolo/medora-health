@@ -100,3 +100,4 @@ console.table(results);
 - Checker runs automatically on page load in development mode
 - All test results include timestamps and viewport information
 
+

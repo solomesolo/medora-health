@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Inter_Tight } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import CustomCursor from './components/CustomCursor'
@@ -7,7 +7,8 @@ import Navigation from './components/Navigation'
 import CookieConsent from './components/CookieConsent'
 import PageWrapper from './components/PageWrapper'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const interTight = Inter_Tight({ subsets: ['latin'], variable: '--font-inter-tight' })
 
 export const metadata: Metadata = {
   title: 'Medora - HealthTech Adoption & Conversion Engineering',
@@ -21,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${interTight.variable} ${inter.className}`}>
         <PageWrapper>
           <CustomCursor />
           <Navigation />

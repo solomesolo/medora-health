@@ -124,9 +124,12 @@ html {
 
 /* Fallback: Make hero content visible immediately, then allow animations */
 .hero-section [data-animate] {
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.hero-section [data-animate].animate {
   opacity: 1 !important;
   transform: translateY(0) !important;
-  transition: opacity 0.9s ease-out, transform 0.9s ease-out;
 }
 
 .hero-section #heroCard {
