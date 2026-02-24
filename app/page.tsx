@@ -5,9 +5,13 @@ import Script from 'next/script'
 import Link from 'next/link'
 import FrictionMirrorSection from './components/FrictionMirrorSection'
 import BehavioralDriftSection from './components/BehavioralDriftSection'
+import QuietFailureStorySection from './components/QuietFailureStorySection'
+import WhyThisMattersSection from './components/WhyThisMattersSection'
+import QuietFailureInsights from './components/QuietFailureInsights'
 import ScrollyStepsSection from './components/ScrollyStepsSection'
 import OutcomesSection from './components/OutcomesSection'
 import ServicesSection from './components/ServicesSection'
+import ApproachSection from './components/ApproachSection'
 
 export default function HomePage() {
   useEffect(() => {
@@ -333,7 +337,7 @@ export default function HomePage() {
   return (
     <>
       <a href="#hero" className="skip-link">Skip to main content</a>
-      <main className="horizontal-scroll-container" role="main" aria-label="Medora website content" style={{ display: 'block' }}>
+      <main className="horizontal-scroll-container" role="main" aria-label="Medora website content" style={{ display: 'block' }} data-app="next">
         <section className="section hero-section" id="hero" aria-label="Hero section">
           <div className="hero-background">
             <div className="hero-gradient"></div>
@@ -413,11 +417,27 @@ export default function HomePage() {
         
         <FrictionMirrorSection />
         
+        <ServicesSection />
+        
         <BehavioralDriftSection />
+
+        <QuietFailureStorySection />
+
+        <WhyThisMattersSection />
+
+        <QuietFailureInsights id="quiet-failure" />
+        <section className="override-sequence-cta-wrap" aria-label="Next steps">
+          <Link href="#contact" className="override-cards-cta-primary">
+            Discuss Your Product Challenges
+          </Link>
+          <Link href="#approach" className="override-cards-cta-secondary">
+            See the diagnostic approach →
+          </Link>
+        </section>
+        
+        <ApproachSection />
         
         <OutcomesSection />
-        
-        <ServicesSection />
         
         <section className="section failure-section" id="failure">
           <div className="failure-background">
