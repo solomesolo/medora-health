@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Settings - Medora</title>
+    <meta name="description" content="Manage your cookie preferences on the Medora website.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/legal-static.css">
+</head>
+<body>
+    <div class="legal-wrap">
+        <div class="legal-top">
+            <a class="legal-back" href="../index.html">← Back to home</a>
+            <a class="legal-close" href="../index.html" aria-label="Close">×</a>
+        </div>
+        <h1 class="legal-title">Cookie settings</h1>
+        <div class="legal-card">
+            <p style="margin-top:0"><strong style="color:var(--legal-text)">Your preferences</strong></p>
+
+            <div style="margin-top:1.5rem">
+                <div class="cookie-row">
+                    <div>
+                        <strong style="color:var(--legal-text);font-size:0.875rem">Essential</strong>
+                        <p style="font-size:0.8125rem;margin:0.35rem 0 0">Required for the site to function. Cannot be disabled here.</p>
+                    </div>
+                    <span style="font-size:0.75rem;color:var(--legal-subtle);flex-shrink:0">Always on</span>
+                </div>
+            </div>
+
+            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(15,23,42,0.06)">
+                <div class="cookie-row">
+                    <div>
+                        <strong style="color:var(--legal-text);font-size:0.875rem">Analytics</strong>
+                        <p style="font-size:0.8125rem;margin:0.35rem 0 0">Optional. Helps us understand aggregate site usage.</p>
+                    </div>
+                    <button type="button" class="cookie-toggle" id="analyticsToggle" role="switch" aria-checked="false" aria-label="Enable analytics cookies"></button>
+                </div>
+            </div>
+
+            <button type="button" class="btn-save" id="saveCookies">Save preferences</button>
+
+            <p class="legal-note">See our <a href="../privacy/">Privacy policy</a> for more detail.</p>
+        </div>
+        <nav class="legal-footer" aria-label="Legal">
+            <a href="../privacy/">Privacy</a>
+            <a href="../cookie-settings/">Cookie settings</a>
+            <a href="../imprint/">Imprint</a>
+            <a href="https://medoraagency.substack.com/" target="_blank" rel="noopener noreferrer">Blog</a>
+        </nav>
+    </div>
+    <script>
+        (function () {
+            var toggle = document.getElementById('analyticsToggle');
+            var save = document.getElementById('saveCookies');
+            if (!toggle || !save) return;
+            var on = localStorage.getItem('cookie-analytics') === 'true';
+            toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+            toggle.addEventListener('click', function () {
+                on = !on;
+                toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+            });
+            save.addEventListener('click', function () {
+                localStorage.setItem('cookie-consent', 'custom');
+                localStorage.setItem('cookie-analytics', on ? 'true' : 'false');
+                window.location.reload();
+            });
+        })();
+    </script>
+</body>
+</html>

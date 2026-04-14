@@ -10,55 +10,63 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   useEffect(() => {
-    // Determine active section based on pathname
+    if (pathname === '/use-cases') {
+      setActiveSection('use-cases')
+      return
+    }
+
     if (pathname !== '/') {
       setActiveSection('')
       return
     }
 
-    // For the main page, use scroll position to determine active section
     const updateActiveSection = () => {
-      const sections = ['hero', 'reality', 'failure', 'solution', 'engagement', 'audience', 'founder', 'packages', 'contact']
-      const scrollPosition = window.scrollY + window.innerHeight / 2
-      
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i])
-        if (section) {
-          const sectionTop = section.offsetTop
-          const sectionBottom = sectionTop + section.offsetHeight
-          
-          if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-            setActiveSection(sections[i])
-            return
-          }
+      const y = window.scrollY + window.innerHeight / 2
+      const ids = [
+        'contact',
+        'final-close',
+        'founder',
+        'services',
+        'solution',
+        'reality',
+        'hero',
+      ] as const
+
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        const top = el.offsetTop
+        const bottom = top + el.offsetHeight
+        if (y >= top && y < bottom) {
+          if (id === 'services') setActiveSection('services')
+          else if (id === 'contact' || id === 'final-close' || id === 'founder')
+            setActiveSection('contact')
+          else setActiveSection('home')
+          return
         }
       }
-      
-      // Default to hero if at the top
-      if (window.scrollY < 100) {
-        setActiveSection('hero')
-      }
+
+      if (window.scrollY < 80) setActiveSection('home')
     }
 
     updateActiveSection()
     window.addEventListener('scroll', updateActiveSection, { passive: true })
-    
+
     return () => {
       window.removeEventListener('scroll', updateActiveSection)
     }
   }, [pathname])
 
   const navItems = [
-    { href: '/#hero', target: 'hero', label: 'Main', external: false },
-    { href: '/#reality', target: 'reality', label: 'Reality', external: false },
-    { href: '/#failure', target: 'failure', label: 'Why It Fails', external: false },
-    { href: '/#solution', target: 'solution', label: 'What We Do', external: false },
-    { href: '/#engagement', target: 'engagement', label: 'Engagement', external: false },
-    { href: '/#audience', target: 'audience', label: "Who It's For", external: false },
-    { href: '/#founder', target: 'founder', label: 'Founder', external: false },
-    { href: '/#packages', target: 'packages', label: 'Packages', external: false },
-    { href: 'https://substack.com/@medoraagency', target: 'blog', label: 'Blog', external: true },
-    { href: 'https://www.eventbrite.co.uk/o/medora-health-120819087631', target: 'events', label: 'Events', external: true },
+    { href: '/#hero', target: 'home', label: 'Home', external: false },
+    { href: '/#services', target: 'services', label: 'Services', external: false },
+    { href: '/use-cases', target: 'use-cases', label: 'Use Cases', external: false },
+    {
+      href: 'https://medoraagency.substack.com/',
+      target: 'blog',
+      label: 'Blog',
+      external: true,
+    },
     { href: '/#contact', target: 'contact', label: 'Contact', external: false },
   ]
 
@@ -107,36 +115,41 @@ export default function Navigation() {
   return (
     <>
       <nav className="top-navigation" role="navigation" aria-label="Main navigation">
-        <div className="nav-container desktop-nav">
-          {navItems.map((item) => {
-            const isActive = activeSection === item.target
-            
-            if (item.external) {
+        <div className="nav-shell desktop-nav">
+          <Link href="/#hero" className="nav-brand">
+            Medora
+          </Link>
+          <div className="nav-links">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.target
+
+              if (item.external) {
+                return (
+                  <a
+                    key={item.target}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`nav-item ${isActive ? 'active' : ''}`}
+                    data-target={item.target}
+                  >
+                    {item.label}
+                  </a>
+                )
+              }
+
               return (
-                <a
+                <Link
                   key={item.target}
                   href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className={`nav-item ${isActive ? 'active' : ''}`}
                   data-target={item.target}
                 >
                   {item.label}
-                </a>
+                </Link>
               )
-            }
-            
-            return (
-              <Link
-                key={item.target}
-                href={item.href}
-                className={`nav-item ${isActive ? 'active' : ''}`}
-                data-target={item.target}
-              >
-                {item.label}
-              </Link>
-            )
-          })}
+            })}
+          </div>
         </div>
         
         {/* Burger Menu Button */}

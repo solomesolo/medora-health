@@ -72,8 +72,7 @@ export default function DegradationFieldCanvas({
     const canvas = canvasRef.current
     if (!container || !canvas) return
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const ctx = canvas.getContext('2d')!
 
     const random = seed != null ? createSeededRandom(seed) : Math.random
     const gridSpacing = 28

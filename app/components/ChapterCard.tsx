@@ -14,7 +14,7 @@ export interface ChapterCardProps {
   chapter: ChapterData
   isActive?: boolean
   onHover?: (vizState: VizState | null) => void
-  sentinelRef?: React.RefObject<HTMLDivElement | null>
+  sentinelRef?: React.Ref<HTMLDivElement>
 }
 
 export default function ChapterCard({

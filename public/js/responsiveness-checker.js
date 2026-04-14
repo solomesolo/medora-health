@@ -166,13 +166,12 @@ class ResponsivenessChecker {
 
     checkSections() {
         const sections = [
-            { selector: '.reality-section', name: 'Reality Section' },
-            { selector: '.failure-section', name: 'Why Adoption Fails' },
-            { selector: '.medora-does-section', name: 'What Medora Does' },
-            { selector: '.engagement-section', name: 'Engagement Section' },
+            { selector: '.reality-section', name: 'Real Problem Section' },
+            { selector: '.what-we-do-section', name: 'What We Do Section' },
+            { selector: '.services-section', name: 'Services Section' },
             { selector: '.founder-section', name: 'Founder Section' },
-            { selector: '.packages-section', name: 'Packages Section' },
-            { selector: '.contact-section', name: 'Contact Section' }
+            { selector: '.final-close-section', name: 'Final Close Section' },
+            { selector: '.contact-section--premium', name: 'Contact Section' }
         ];
 
         const sectionResults = sections.map(section => {

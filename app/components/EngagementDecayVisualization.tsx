@@ -21,7 +21,7 @@ export default function EngagementDecayVisualization({
   reducedMotion = false
 }: EngagementDecayVisualizationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
   const layersRef = useRef<LayerState[]>([])
   const timeRef = useRef(0)
   const phaseOffsetRef = useRef<number[]>([])
@@ -82,6 +82,7 @@ export default function EngagementDecayVisualization({
 
     const animate = (currentTime: number) => {
       if (!ctxRef) return
+      const ctx2d = ctxRef
 
       // Initialize time
       if (timeRef.current === 0) {
@@ -96,7 +97,7 @@ export default function EngagementDecayVisualization({
       const height = canvas.height / dpr
 
       // Clear canvas
-      ctxRef.clearRect(0, 0, width, height)
+      ctx2d.clearRect(0, 0, width, height)
       const centerX = width / 2
       const centerY = height / 2
 
@@ -163,23 +164,23 @@ export default function EngagementDecayVisualization({
         const baseHeight = height * (0.75 - index * 0.12)
 
         // Apply transformations
-        ctxRef.save()
-        ctxRef.translate(centerX + translationX, centerY + translationY)
-        ctxRef.rotate((rotation * Math.PI) / 180)
-        ctxRef.scale(scale, scale)
+        ctx2d.save()
+        ctx2d.translate(centerX + translationX, centerY + translationY)
+        ctx2d.rotate((rotation * Math.PI) / 180)
+        ctx2d.scale(scale, scale)
 
         // Apply blur via shadow (more performant than filter)
         if (blur > 0) {
-          ctxRef.shadowBlur = blur * 2
-          ctxRef.shadowColor = 'rgba(59, 130, 246, 0.1)'
+          ctx2d.shadowBlur = blur * 2
+          ctx2d.shadowColor = 'rgba(59, 130, 246, 0.1)'
         }
 
         // Draw rounded rectangle
         const cornerRadius = 16 - index * 2
-        ctxRef.globalAlpha = layer.opacity * (1 - decayIntensity * 0.3)
+        ctx2d.globalAlpha = layer.opacity * (1 - decayIntensity * 0.3)
 
         // Gradient fill
-        const gradient = ctxRef.createLinearGradient(
+        const gradient = ctx2d.createLinearGradient(
           -baseWidth / 2,
           -baseHeight / 2,
           baseWidth / 2,
@@ -189,45 +190,45 @@ export default function EngagementDecayVisualization({
         gradient.addColorStop(0.5, `rgba(34, 211, 238, ${0.04 - index * 0.01})`)
         gradient.addColorStop(1, `rgba(59, 130, 246, ${0.06 - index * 0.01})`)
 
-        ctxRef.fillStyle = gradient
-        ctxRef.strokeStyle = `rgba(59, 130, 246, ${0.12 - index * 0.02})`
-        ctxRef.lineWidth = 1
+        ctx2d.fillStyle = gradient
+        ctx2d.strokeStyle = `rgba(59, 130, 246, ${0.12 - index * 0.02})`
+        ctx2d.lineWidth = 1
 
         // Draw rounded rect (compatible method)
-        ctxRef.beginPath()
+        ctx2d.beginPath()
         const x = -baseWidth / 2
         const y = -baseHeight / 2
         const w = baseWidth
         const h = baseHeight
         const r = cornerRadius
         
-        ctxRef.moveTo(x + r, y)
-        ctxRef.lineTo(x + w - r, y)
-        ctxRef.quadraticCurveTo(x + w, y, x + w, y + r)
-        ctxRef.lineTo(x + w, y + h - r)
-        ctxRef.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
-        ctxRef.lineTo(x + r, y + h)
-        ctxRef.quadraticCurveTo(x, y + h, x, y + h - r)
-        ctxRef.lineTo(x, y + r)
-        ctxRef.quadraticCurveTo(x, y, x + r, y)
-        ctxRef.closePath()
-        ctxRef.fill()
-        ctxRef.stroke()
+        ctx2d.moveTo(x + r, y)
+        ctx2d.lineTo(x + w - r, y)
+        ctx2d.quadraticCurveTo(x + w, y, x + w, y + r)
+        ctx2d.lineTo(x + w, y + h - r)
+        ctx2d.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+        ctx2d.lineTo(x + r, y + h)
+        ctx2d.quadraticCurveTo(x, y + h, x, y + h - r)
+        ctx2d.lineTo(x, y + r)
+        ctx2d.quadraticCurveTo(x, y, x + r, y)
+        ctx2d.closePath()
+        ctx2d.fill()
+        ctx2d.stroke()
 
-        ctxRef.restore()
+        ctx2d.restore()
       })
 
       // Add subtle noise/interference overlay
-      if (!reducedMotion && decayIntensity > 0.3 && ctxRef) {
-        ctxRef.save()
-        ctxRef.globalAlpha = decayIntensity * 0.02
-        ctxRef.fillStyle = '#94A3B8'
+      if (!reducedMotion && decayIntensity > 0.3) {
+        ctx2d.save()
+        ctx2d.globalAlpha = decayIntensity * 0.02
+        ctx2d.fillStyle = '#94A3B8'
         for (let i = 0; i < 20; i++) {
           const x = Math.random() * width
           const y = Math.random() * height
-          ctxRef.fillRect(x, y, 1, 1)
+          ctx2d.fillRect(x, y, 1, 1)
         }
-        ctxRef.restore()
+        ctx2d.restore()
       }
 
       animationId = requestAnimationFrame(animate)

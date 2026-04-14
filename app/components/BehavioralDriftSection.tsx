@@ -203,7 +203,7 @@ function StaticGrid({ isDistorted = false, onHover = false }: { isDistorted?: bo
 function BehavioralDriftVisualization() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
   const phaseRef = useRef<'stable' | 'drift' | 'recovery'>('stable')
   const timeRef = useRef<number | null>(null)
   const mousePosRef = useRef({ x: -1, y: -1 })

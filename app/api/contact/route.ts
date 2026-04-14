@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       })
       return NextResponse.json(
         { 
-          error: 'Email service is not configured. Please contact support directly at anna.solovyova@medora.agency',
+          error: 'Email service is not configured. Please contact support directly at annasolovyova@gmx.de',
           debug: process.env.NODE_ENV === 'development' ? 'RESEND_API_KEY is missing' : undefined
         },
         { status: 500 }
@@ -63,7 +63,7 @@ This message was sent from the Medora website contact form.
     `.trim()
 
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
-    const toEmail = 'anna.solovyova@medora.agency'
+    const toEmail = 'annasolovyova@gmx.de'
 
     console.log('📧 Attempting to send email...')
     console.log('From:', fromEmail)
@@ -91,7 +91,7 @@ This message was sent from the Medora website contact form.
         // Return error to client so they know it failed
         return NextResponse.json(
           { 
-            error: 'Failed to send email. Please try again or contact us directly at anna.solovyova@medora.agency',
+            error: 'Failed to send email. Please try again or contact us directly at annasolovyova@gmx.de',
             debug: process.env.NODE_ENV === 'development' ? error : undefined
           },
           { status: 500 }
@@ -121,7 +121,7 @@ This message was sent from the Medora website contact form.
       
       return NextResponse.json(
         { 
-          error: 'An unexpected error occurred while sending the email. Please try again or contact us directly at anna.solovyova@medora.agency',
+          error: 'An unexpected error occurred while sending the email. Please try again or contact us directly at annasolovyova@gmx.de',
           debug: process.env.NODE_ENV === 'development' ? emailError.message : undefined
         },
         { status: 500 }

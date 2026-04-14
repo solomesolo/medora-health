@@ -15,7 +15,6 @@ export default function CookieSettings() {
   const handleSave = () => {
     localStorage.setItem('cookie-consent', 'custom')
     localStorage.setItem('cookie-analytics', analyticsEnabled ? 'true' : 'false')
-    // Close or show confirmation
     if (typeof window !== 'undefined') {
       window.location.reload()
     }
@@ -26,48 +25,48 @@ export default function CookieSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-[#F3F1EC] text-base font-semibold mb-4">Cookie Settings</h2>
-        
+        <h2 className="mb-4 text-base font-semibold text-slate-900">Your preferences</h2>
+
         <div className="space-y-6">
-          {/* Essential Cookies */}
           <div>
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="text-[#F3F1EC] text-sm font-semibold">Essential</h3>
-              <span className="text-[#8A9B8A] text-xs">Always active</span>
+            <div className="mb-2 flex items-start justify-between gap-4">
+              <h3 className="text-sm font-semibold text-slate-900">Essential</h3>
+              <span className="shrink-0 text-xs text-slate-500">Always active</span>
             </div>
-            <p className="text-[#B9AF9A] text-xs leading-relaxed">
-              These cookies are necessary for the website to function. They cannot be disabled.
+            <p className="text-xs leading-relaxed text-slate-600">
+              Required for the site to function (e.g. security, load balancing). These cannot be disabled here.
             </p>
           </div>
 
-          {/* Analytics Cookies */}
           <div>
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="text-[#F3F1EC] text-sm font-semibold">Analytics</h3>
-              <label className="relative inline-flex items-center cursor-pointer">
+            <div className="mb-2 flex items-start justify-between gap-4">
+              <h3 className="text-sm font-semibold text-slate-900">Analytics</h3>
+              <label className="relative inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
                   checked={analyticsEnabled}
                   onChange={(e) => setAnalyticsEnabled(e.target.checked)}
-                  className="sr-only peer"
+                  className="peer sr-only"
                   aria-label="Enable analytics cookies"
                   aria-checked={analyticsEnabled}
                   role="switch"
                 />
-                <div className="w-11 h-6 bg-white/10 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#5F7D73] peer-focus:ring-offset-2 peer-focus:ring-offset-[#4A4541] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/20 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#5F7D73]"></div>
+                <span className="relative h-6 w-11 shrink-0 rounded-full bg-slate-200 transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2 peer-checked:bg-blue-600 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-[20px]" />
               </label>
             </div>
-            <p className="text-[#B9AF9A] text-xs leading-relaxed">
-              These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.
+            <p className="text-xs leading-relaxed text-slate-600">
+              Optional. Helps us understand how visitors use the site in aggregate. No advertising cookies are set
+              through this control.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="pt-4 border-t border-white/10">
+      <div className="border-t border-slate-100 pt-4">
         <button
+          type="button"
           onClick={handleSave}
-          className="text-[#5F7D73] hover:text-[#7A9B8F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#5F7D73] focus:ring-offset-2 focus:ring-offset-[#4A4541] rounded px-2 py-1"
+          className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
         >
           Save preferences
         </button>
@@ -75,4 +74,3 @@ export default function CookieSettings() {
     </div>
   )
 }
-

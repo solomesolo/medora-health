@@ -276,6 +276,14 @@
         
         // Match nav item by index position - nav item 0 = section 0, nav item 1 = section 1, etc.
         navItems.forEach((item, index) => {
+            const href = item.getAttribute('href') || '';
+            const isExternal =
+                item.getAttribute('target') === '_blank' || /^https?:\/\//i.test(href);
+            const isPageNavigation = href && !href.startsWith('#');
+            if (isExternal || isPageNavigation) {
+                item.classList.remove('active');
+                return;
+            }
             if (index === activeIndex) {
                 item.classList.add('active');
                 console.log(`Activated nav item ${index}`);
@@ -292,14 +300,23 @@
      * Handle navigation item clicks - Match by index position
      */
     function handleNavigationClick(e) {
+        const anchor = e.currentTarget;
+        const href = anchor.getAttribute('href') || '';
+        const isExternal =
+            anchor.getAttribute('target') === '_blank' || /^https?:\/\//i.test(href);
+        const isPageNavigation = href && !href.startsWith('#');
+        if (isExternal || isPageNavigation) {
+            return;
+        }
+
         e.preventDefault();
-        
+
         // Get all nav items to find the clicked one's index
         const navItems = Array.from(document.querySelectorAll('.nav-item'));
-        const clickedIndex = navItems.indexOf(e.target);
-        
+        const clickedIndex = navItems.indexOf(anchor);
+
         if (clickedIndex === -1) return;
-        
+
         // Scroll to section at the same index
         scrollToSection(clickedIndex);
         
@@ -894,34 +911,20 @@
         }
 
         // Hide form with smooth transition
-        contactForm.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+        contactForm.style.transition = 'opacity 0.35s ease, visibility 0.35s ease, max-height 0.35s ease';
         contactForm.style.opacity = '0';
         contactForm.style.visibility = 'hidden';
-        contactForm.style.height = '0';
+        contactForm.style.maxHeight = '0';
         contactForm.style.overflow = 'hidden';
         contactForm.style.margin = '0';
         contactForm.style.padding = '0';
-        
-        // Create confirmation message
+        contactForm.style.pointerEvents = 'none';
+
         const confirmation = document.createElement('div');
         confirmation.className = 'form-confirmation';
-        confirmation.style.cssText = `
-            display: block !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            margin-top: 2rem;
-            padding: 2rem;
-            background-color: rgba(95, 125, 115, 0.25);
-            border: 2px solid rgba(95, 125, 115, 0.5);
-            border-radius: 0.75rem;
-            position: relative;
-            z-index: 100;
-        `;
         confirmation.innerHTML = `
             <div class="form-confirmation-content">
-                <p class="form-confirmation-text" style="font-size: 1.125rem; line-height: 1.6; color: var(--text-primary); margin: 0; font-weight: 500;">
-                    We have got your request, our team will contact you soon.
-                </p>
+                <p class="form-confirmation-text">Thank you. We have received your message and will reply shortly.</p>
             </div>
         `;
         
@@ -931,12 +934,7 @@
         // Reset form
         contactForm.reset();
         
-        // Force visibility
         setTimeout(() => {
-            confirmation.style.display = 'block';
-            confirmation.style.opacity = '1';
-            confirmation.style.visibility = 'visible';
-            
             // Scroll to keep confirmation in view, but don't jump
             const formRect = formWrapper.getBoundingClientRect();
             const confirmationRect = confirmation.getBoundingClientRect();
@@ -993,10 +991,13 @@
         submitButton.disabled = true;
         submitButton.textContent = 'Sending...';
         
+        // Keep data accessible for fallback
+        let data = {};
+
         try {
             // Get form data
             const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData);
+            data = Object.fromEntries(formData);
             
             console.log('Sending form data:', data);
             
@@ -1027,7 +1028,25 @@
             console.error('Form submission error:', error);
             // Restore scroll position
             window.scrollTo(scrollX, scrollY);
-            alert('Sorry, there was an error sending your message. Please try again or contact us directly at anna.solovyova@medora.agency');
+
+            // Static fallback: open mail client if /api/contact is unavailable
+            try {
+                const d = data || {};
+                const subject = encodeURIComponent(`Contact from ${d.name || ''} at ${d.company || ''}`.trim());
+                const body = encodeURIComponent(
+                    `Name: ${d.name || ''}\n` +
+                    `Company: ${d.company || ''}\n` +
+                    `Role: ${d.role || ''}\n` +
+                    `Email: ${d.email || ''}\n\n` +
+                    `Message:\n${d['adoption-breaks'] || ''}`
+                );
+                window.location.href = `mailto:annasolovyova@gmx.de?subject=${subject}&body=${body}`;
+                return;
+            } catch (fallbackError) {
+                console.error('Mailto fallback failed:', fallbackError);
+            }
+
+            alert('Sorry, there was an error sending your message. Please try again or contact us directly at annasolovyova@gmx.de');
         } finally {
             // Re-enable button
             submitButton.disabled = false;
@@ -1084,62 +1103,84 @@
 })();
 
 /**
- * MEDORA - Premium Cursor
- * Custom cursor with magnetic hover effects
+ * MEDORA - Cookie consent (static site; opens settings view on first visit)
  */
 (function() {
     'use strict';
 
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) {
-        return; // Don't initialize custom cursor
+    try {
+        if (typeof localStorage === 'undefined') return;
+        if (localStorage.getItem('cookie-consent')) return;
+    } catch (e) {
+        return;
     }
 
-    const dot = document.createElement('div');
-    const ring = document.createElement('div');
-    dot.className = 'cursor-dot';
-    ring.className = 'cursor-ring';
-    document.body.appendChild(dot);
-    document.body.appendChild(ring);
+    let analyticsOn = localStorage.getItem('cookie-analytics') === 'true';
 
-    let x = 0, y = 0;
-    let rx = 0, ry = 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'medora-cookie-consent';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.setAttribute('aria-labelledby', 'medora-cookie-title');
 
-    const onMove = (e) => {
-        x = e.clientX;
-        y = e.clientY;
-    };
+    wrap.innerHTML =
+        '<div class="medora-cookie-consent__backdrop" aria-hidden="true"></div>' +
+        '<div class="medora-cookie-consent__panel">' +
+        '<h2 id="medora-cookie-title" class="medora-cookie-consent__title">Cookie settings</h2>' +
+        '<p class="medora-cookie-consent__intro">We use essential cookies so the site works, and optional analytics cookies if you allow them. You can change this anytime via the footer link.</p>' +
+        '<div class="medora-cookie-consent__row">' +
+        '<div><div class="medora-cookie-consent__label">Essential</div>' +
+        '<p class="medora-cookie-consent__desc">Required for basic site function. Always active.</p></div>' +
+        '<span class="medora-cookie-consent__badge">Always on</span></div>' +
+        '<div class="medora-cookie-consent__row">' +
+        '<div><div class="medora-cookie-consent__label">Analytics</div>' +
+        '<p class="medora-cookie-consent__desc">Helps us understand how visitors use the site.</p></div>' +
+        '<button type="button" class="medora-cookie-consent__switch" id="medoraCookieAnalytics" role="switch" aria-checked="false" aria-label="Enable analytics cookies"></button></div>' +
+        '<div class="medora-cookie-consent__actions">' +
+        '<button type="button" class="medora-cookie-consent__btn medora-cookie-consent__btn--primary" id="medoraCookieSave">Save preferences</button>' +
+        '<button type="button" class="medora-cookie-consent__btn medora-cookie-consent__btn--ghost" id="medoraCookieReject">Reject all</button>' +
+        '<button type="button" class="medora-cookie-consent__btn medora-cookie-consent__btn--ghost" id="medoraCookieAccept">Accept all</button>' +
+        '</div></div>';
 
-    const tick = () => {
-        // Smooth follow for ring
-        rx += (x - rx) * 0.14;
-        ry += (y - ry) * 0.14;
-        
-        dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-        ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
-        
-        requestAnimationFrame(tick);
-    };
+    function close() {
+        wrap.remove();
+    }
 
-    const setHover = (isHover) => {
-        ring.classList.toggle('is-hover', isHover);
-        dot.classList.toggle('is-hover', isHover);
-    };
+    function syncSwitch(btn) {
+        btn.classList.toggle('is-on', analyticsOn);
+        btn.setAttribute('aria-checked', analyticsOn ? 'true' : 'false');
+    }
 
-    const onOver = (e) => {
-        const el = e.target?.closest?.('a, button, .magnetic');
-        if (el) setHover(true);
-    };
+    function init() {
+        document.body.appendChild(wrap);
+        const btn = wrap.querySelector('#medoraCookieAnalytics');
+        syncSwitch(btn);
+        btn.addEventListener('click', function() {
+            analyticsOn = !analyticsOn;
+            syncSwitch(btn);
+        });
+        wrap.querySelector('#medoraCookieSave').addEventListener('click', function() {
+            localStorage.setItem('cookie-consent', 'custom');
+            localStorage.setItem('cookie-analytics', analyticsOn ? 'true' : 'false');
+            close();
+        });
+        wrap.querySelector('#medoraCookieReject').addEventListener('click', function() {
+            localStorage.setItem('cookie-consent', 'rejected');
+            localStorage.setItem('cookie-analytics', 'false');
+            close();
+        });
+        wrap.querySelector('#medoraCookieAccept').addEventListener('click', function() {
+            localStorage.setItem('cookie-consent', 'accepted');
+            localStorage.setItem('cookie-analytics', 'true');
+            close();
+        });
+    }
 
-    const onOut = () => {
-        setHover(false);
-    };
-
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseover', onOver, true);
-    document.addEventListener('mouseout', onOut, true);
-    tick();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
 
 /**
@@ -1193,295 +1234,325 @@
 })();
 
 /**
- * MEDORA - Reality Section Animations
- * Premium staggered animations with blur effects
+ * MEDORA — Section 2: The real problem
+ * Word title, intro delay, scroll-reveal bullets, timeline fill, divider
  */
 (function() {
     'use strict';
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    function initRealityAnimations() {
-        const realitySection = document.getElementById('reality');
-        if (!realitySection) return;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-        const header = realitySection.querySelector('[data-animate="header"]');
-        const items = realitySection.querySelectorAll('[data-animate="item"]');
+    function initRealProblemSection() {
+        const section = document.getElementById('reality');
+        if (!section || !section.classList.contains('real-problem-section')) return;
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Animate header
-                    if (header) {
-                        setTimeout(() => {
-                            header.classList.add('animate');
-                        }, 100);
-                    }
+        const words = section.querySelectorAll('.real-problem-word');
+        const intro = section.querySelector('.real-problem-intro');
+        const items = section.querySelectorAll('.real-problem-item');
+        const fill = section.querySelector('.real-problem-timeline-fill');
+        const divider = section.querySelector('.real-problem-divider');
+        const reduce = motionQuery.matches;
 
-                    // Animate items with stagger
-                    items.forEach((item, i) => {
-                        const delay = prefersReducedMotion ? 0 : i * 60;
-                        setTimeout(() => {
-                            item.classList.add('animate');
-                        }, 300 + delay);
-                    });
+        const wordStaggerMs = 120;
+        const introDelayAfterWordsMs = 300;
 
-                    observer.unobserve(entry.target);
-                }
+        function setTimelineProgress(revealed) {
+            if (!fill) return;
+            const total = items.length;
+            const ratio = total > 0 ? revealed / total : 0;
+            fill.style.transform = 'scaleY(' + ratio + ')';
+        }
+
+        function revealAllBullets() {
+            let n = 0;
+            items.forEach((item) => {
+                item.classList.add('is-revealed');
+                n += 1;
             });
-        }, { threshold: 0.2 });
+            setTimelineProgress(n);
+        }
 
-        observer.observe(realitySection);
-        
-        // Set up stage rail interactions
-        setupRealityStageRail(realitySection, items);
-    }
-    
-    // Set up stage rail indicator for Reality section
-    function setupRealityStageRail(realitySection, items) {
-        const railIndicator = document.getElementById('railIndicator');
-        const railLabels = realitySection.querySelectorAll('.rail-label');
-        
-        console.log('Setting up reality rail:', {
-            railIndicator: !!railIndicator,
-            railLabels: railLabels.length,
-            items: items.length
-        });
-        
-        if (!railIndicator || !railLabels.length || !items.length) {
-            console.warn('Reality rail setup failed - missing elements');
+        function bindBulletObservers() {
+            let revealed = 0;
+
+            const onRevealed = () => {
+                revealed += 1;
+                setTimelineProgress(revealed);
+            };
+
+            items.forEach((item) => {
+                const io = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (!entry.isIntersecting || item.classList.contains('is-revealed')) return;
+                            item.classList.add('is-revealed');
+                            onRevealed();
+                            io.unobserve(item);
+                        });
+                    },
+                    { threshold: 0.22, rootMargin: '0px 0px -6% 0px' }
+                );
+                io.observe(item);
+            });
+        }
+
+        function runTitleSequence() {
+            if (reduce) {
+                words.forEach((w) => w.classList.add('is-visible'));
+                if (intro) intro.classList.add('is-visible');
+                return;
+            }
+            words.forEach((word, i) => {
+                setTimeout(() => {
+                    word.classList.add('is-visible');
+                }, i * wordStaggerMs);
+            });
+            if (intro) {
+                const introDelay = words.length * wordStaggerMs + introDelayAfterWordsMs;
+                setTimeout(() => {
+                    intro.classList.add('is-visible');
+                }, introDelay);
+            }
+        }
+
+        if (reduce) {
+            runTitleSequence();
+            revealAllBullets();
+            if (divider) divider.classList.add('is-visible');
             return;
         }
-        
-        // Default stage (PILOT)
-        let activeStage = 'PILOT';
-        let clickedIndex = null; // Track which item was clicked
-        
-        // Map item index to stage
-        const indexToStage = {
-            0: 'DEMO',
-            1: 'PILOT',
-            2: 'PILOT',
-            3: 'USAGE',
-            4: 'USAGE'
-        };
-        
-        function updateRail(stage) {
-            // Update indicator position
-            railIndicator.setAttribute('data-stage', stage);
-            
-            // Update label states
-            railLabels.forEach(label => {
-                if (label.getAttribute('data-stage') === stage) {
-                    label.classList.add('active');
-                } else {
-                    label.classList.remove('active');
-                }
+
+        function scheduleFallbackStagger() {
+            if (reduce) return;
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const unrevealed = [...items].filter((li) => !li.classList.contains('is-revealed'));
+                    if (unrevealed.length === 0 || unrevealed.length !== items.length) return;
+                    const allInViewport = [...items].every((li) => {
+                        const r = li.getBoundingClientRect();
+                        return r.top >= -4 && r.bottom <= window.innerHeight + 12;
+                    });
+                    if (!allInViewport) return;
+                    items.forEach((item, i) => {
+                        setTimeout(() => {
+                            item.classList.add('is-revealed');
+                            setTimelineProgress(i + 1);
+                        }, i * 140);
+                    });
+                }, 450);
             });
-            
-            activeStage = stage;
         }
-        
-        // Set default state (PILOT)
-        updateRail('PILOT');
-        
-        // Handle left item interactions
-        items.forEach((item, index) => {
-            const stage = item.getAttribute('data-stage') || indexToStage[index];
-            
-            const handleEnter = () => {
-                // On hover, preview the stage (unless an item is clicked)
-                if (clickedIndex === null) {
-                    item.classList.add('active');
-                    updateRail(stage);
-                }
-            };
-            
-            const handleLeave = () => {
-                // Only remove active on leave if this item wasn't clicked
-                if (clickedIndex !== index) {
-                    item.classList.remove('active');
-                    // If no item is clicked, reset to default stage
-                    if (clickedIndex === null) {
-                        updateRail('PILOT');
-                    }
-                }
-            };
-            
-            const handleClick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Reality item clicked:', index, 'stage:', stage);
-                // Remove active from all items
-                items.forEach(i => i.classList.remove('active'));
-                // Add active to clicked item
-                item.classList.add('active');
-                updateRail(stage);
-                clickedIndex = index;
-                console.log('Rail updated to stage:', stage);
-            };
-            
-            // Make sure item is clickable
-            if (item.tagName === 'BUTTON') {
-                item.setAttribute('type', 'button');
+
+        const sectionIo = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    runTitleSequence();
+                    scheduleFallbackStagger();
+                    sectionIo.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.2 }
+        );
+        sectionIo.observe(section);
+
+        bindBulletObservers();
+
+        if (divider) {
+            const divIo = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        divider.classList.add('is-visible');
+                        divIo.unobserve(entry.target);
+                    });
+                },
+                { threshold: 0.35, rootMargin: '0px 0px -5% 0px' }
+            );
+            divIo.observe(divider);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initRealProblemSection);
+    } else {
+        initRealProblemSection();
+    }
+})();
+
+/**
+ * MEDORA — Section 3: What we do (typewriter, rejects, core card + phrase highlights)
+ */
+(function() {
+    'use strict';
+
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function initWhatWeDoSection() {
+        const section = document.getElementById('solution');
+        if (!section || !section.classList.contains('what-we-do-section')) return;
+
+        const typeEl = section.querySelector('.what-we-do-type');
+        const cursor = section.querySelector('.what-we-do-cursor');
+        const rejectLines = section.querySelectorAll('.what-we-do-reject-line');
+        const coreCard = section.querySelector('[data-wwd-core]');
+        const phrases = section.querySelectorAll('[data-wwd-phrase]');
+
+        const FULL_TITLE = 'We make your product work in Germany.';
+        const TYPE_MS = 36;
+        const reduce = motionQuery.matches;
+
+        function runPhraseSequence() {
+            if (!phrases.length || reduce) return;
+            const holdMs = 520;
+            const gapMs = 260;
+            let i = 0;
+
+            function step() {
+                phrases.forEach((p) => p.classList.remove('is-highlight'));
+                if (i >= phrases.length) return;
+                phrases[i].classList.add('is-highlight');
+                setTimeout(() => {
+                    phrases[i].classList.remove('is-highlight');
+                    i += 1;
+                    setTimeout(step, gapMs);
+                }, holdMs);
             }
-            
-            item.addEventListener('mouseenter', handleEnter);
-            item.addEventListener('mouseleave', handleLeave);
-            item.addEventListener('click', handleClick);
-            // Also handle mousedown for better responsiveness
-            item.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-            });
-            item.addEventListener('focus', () => {
-                item.classList.add('active');
-                updateRail(stage);
-            });
-            item.addEventListener('blur', () => {
-                if (clickedIndex !== index) {
-                    item.classList.remove('active');
+
+            step();
+        }
+
+        function finishCursor() {
+            if (!cursor) return;
+            cursor.classList.remove('is-typing');
+            cursor.classList.add('is-blinking');
+            const hide = () => {
+                cursor.classList.add('is-off');
+                cursor.classList.remove('is-blinking');
+            };
+            cursor.addEventListener('animationend', hide, { once: true });
+            setTimeout(hide, 1300);
+        }
+
+        function runTypewriter() {
+            if (!typeEl) return;
+            if (reduce) {
+                typeEl.textContent = FULL_TITLE;
+                return;
+            }
+            if (cursor) cursor.classList.add('is-typing');
+            let i = 0;
+
+            function tick() {
+                if (i < FULL_TITLE.length) {
+                    typeEl.textContent = FULL_TITLE.slice(0, i + 1);
+                    i += 1;
+                    setTimeout(tick, TYPE_MS);
+                } else {
+                    finishCursor();
                 }
-            });
-        });
+            }
+
+            tick();
+        }
+
+        if (reduce) {
+            if (typeEl) typeEl.textContent = FULL_TITLE;
+            rejectLines.forEach((line) => line.classList.add('is-visible'));
+            if (coreCard) coreCard.classList.add('is-visible');
+            return;
+        }
+
+        let sectionStarted = false;
+        const sectionIo = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting || sectionStarted) return;
+                    sectionStarted = true;
+                    runTypewriter();
+                    rejectLines.forEach((line, idx) => {
+                        setTimeout(() => line.classList.add('is-visible'), 200 + idx * 95);
+                    });
+                    sectionIo.unobserve(section);
+                });
+            },
+            { threshold: 0.18 }
+        );
+        sectionIo.observe(section);
+
+        let coreDone = false;
+        if (coreCard) {
+            const cardIo = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting || coreDone) return;
+                        coreDone = true;
+                        coreCard.classList.add('is-visible');
+                        setTimeout(runPhraseSequence, 450);
+                        cardIo.unobserve(coreCard);
+                    });
+                },
+                { threshold: 0.32, rootMargin: '0px 0px -6% 0px' }
+            );
+            cardIo.observe(coreCard);
+        }
     }
 
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initRealityAnimations);
+        document.addEventListener('DOMContentLoaded', initWhatWeDoSection);
     } else {
-        initRealityAnimations();
+        initWhatWeDoSection();
     }
 })();
 
 /**
- * MEDORA - What Medora Does Section
- * Simple fade-in animations for explanation blocks
+ * MEDORA — Services section (always-visible cards; scroll-linked progress dots)
  */
 (function() {
     'use strict';
 
-    function initMedoraDoesAnimations() {
-        const solutionSection = document.getElementById('solution');
-        if (!solutionSection) return;
+    function initServicesSection() {
+        const grid = document.querySelector('[data-services-grid]');
+        if (!grid) return;
 
-        const blocks = solutionSection.querySelectorAll('[data-animate="block"]');
-        if (!blocks.length) return;
-
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const delay = prefersReducedMotion ? 0 : 100;
-                    setTimeout(() => {
-                        entry.target.classList.add('animate');
-                    }, delay);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.2 });
-
-        blocks.forEach(block => {
-            observer.observe(block);
-        });
-    }
-
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initMedoraDoesAnimations);
-    } else {
-        initMedoraDoesAnimations();
-    }
-})();
-
-/**
- * MEDORA - Engagement Model Section
- * Staggered fade-in animations for engagement cards
- */
-(function() {
-    'use strict';
-
-    function initEngagementAnimations() {
-        const engagementSection = document.getElementById('engagement');
-        if (!engagementSection) return;
-
-        const cards = engagementSection.querySelectorAll('[data-animate="card"]');
+        const cards = grid.querySelectorAll('[data-service-card]');
         if (!cards.length) return;
 
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Stagger animations
-                    cards.forEach((card, index) => {
-                        const delay = prefersReducedMotion ? 0 : index * 100;
-                        setTimeout(() => {
-                            card.classList.add('animate');
-                        }, 200 + delay);
-                    });
-                    observer.unobserve(entry.target);
-                }
+        function updateDots(scrollEl, dotsWrap) {
+            if (!scrollEl || !dotsWrap) return;
+            const dots = dotsWrap.querySelectorAll('.service-card__dot');
+            if (!dots.length) return;
+            const max = scrollEl.scrollHeight - scrollEl.clientHeight;
+            if (max <= 2) {
+                dots.forEach((dot) => dot.classList.add('is-filled'));
+                return;
+            }
+            const pct = Math.max(0, Math.min(1, scrollEl.scrollTop / max));
+            const n = dots.length;
+            const filledCount = pct >= 0.995 ? n : Math.floor(pct * n);
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('is-filled', i < filledCount);
             });
-        }, { threshold: 0.2 });
+        }
 
-        observer.observe(engagementSection);
+        cards.forEach((card) => {
+            const scrollEl = card.querySelector('[data-service-scroll]');
+            const dotsWrap = card.querySelector('[data-service-dots]');
+            if (!scrollEl || !dotsWrap) return;
+            const run = () => updateDots(scrollEl, dotsWrap);
+            run();
+            scrollEl.addEventListener('scroll', run, { passive: true });
+            window.addEventListener('resize', run, { passive: true });
+        });
     }
 
-    // Make function available globally for engagement parallax
-    window.initEngagementAnimations = initEngagementAnimations;
-
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initEngagementAnimations);
+        document.addEventListener('DOMContentLoaded', initServicesSection);
     } else {
-        initEngagementAnimations();
-    }
-})();
-
-/**
- * MEDORA - Who Section (Audience)
- * Fade-in animations for premium panels
- */
-(function() {
-    'use strict';
-
-    function initWhoAnimations() {
-        const whoSection = document.getElementById('audience');
-        if (!whoSection) return;
-
-        const panels = whoSection.querySelectorAll('[data-animate="panel"]');
-        if (!panels.length) return;
-
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Stagger animations
-                    panels.forEach((panel, index) => {
-                        const delay = prefersReducedMotion ? 0 : index * 100;
-                        setTimeout(() => {
-                            const panelCard = panel.querySelector('.who-panel');
-                            if (panelCard) {
-                                panelCard.classList.add('animate');
-                            }
-                        }, 200 + delay);
-                    });
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.2 });
-
-        observer.observe(whoSection);
+        initServicesSection();
     }
 
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initWhoAnimations);
-    } else {
-        initWhoAnimations();
-    }
+    window.initEngagementAnimations = function() {};
 })();
 
 /**
@@ -1532,44 +1603,93 @@
 })();
 
 /**
- * MEDORA - Engagement Packages Section
- * Staggered fade-in animations for package cards
+ * MEDORA — Final close (pre-contact): staggered lines, CTA ripple, micro delay, bg drift
  */
 (function() {
     'use strict';
 
-    function initPackagesAnimations() {
-        const packagesSection = document.getElementById('packages');
-        if (!packagesSection) return;
+    const STAGGER_MS = 200;
+    const MICRO_DELAY_MS = 2000;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-        const cards = packagesSection.querySelectorAll('[data-animate="card"]');
-        if (!cards.length) return;
+    function initFinalCloseSection() {
+        const section = document.getElementById('final-close');
+        if (!section) return;
 
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const lines = section.querySelectorAll('[data-final-close-line]');
+        const cta = section.querySelector('[data-final-close-cta]');
+        const micro = section.querySelector('[data-final-close-micro]');
+        let played = false;
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Stagger animations
-                    cards.forEach((card, index) => {
-                        const delay = prefersReducedMotion ? 0 : index * 100;
-                        setTimeout(() => {
-                            card.classList.add('animate');
-                        }, 200 + delay);
-                    });
-                    observer.unobserve(entry.target);
-                }
+        function revealAll() {
+            lines.forEach((el) => el.classList.add('is-visible'));
+            if (cta) cta.classList.add('is-visible');
+            if (micro) micro.classList.add('is-visible');
+        }
+
+        function playSequence() {
+            if (played) return;
+            played = true;
+
+            if (motionQuery.matches) {
+                revealAll();
+                return;
+            }
+
+            lines.forEach((el, i) => {
+                window.setTimeout(() => el.classList.add('is-visible'), i * STAGGER_MS);
             });
-        }, { threshold: 0.2 });
 
-        observer.observe(packagesSection);
+            const ctaDelay = lines.length * STAGGER_MS;
+            if (cta) {
+                window.setTimeout(() => cta.classList.add('is-visible'), ctaDelay);
+            }
+
+            if (micro) {
+                window.setTimeout(() => micro.classList.add('is-visible'), MICRO_DELAY_MS);
+            }
+        }
+
+        if (cta) {
+            cta.addEventListener('click', (e) => {
+                if (motionQuery.matches) return;
+                const rect = cta.getBoundingClientRect();
+                const hasPointer =
+                    typeof e.clientX === 'number' &&
+                    typeof e.clientY === 'number' &&
+                    (e.clientX !== 0 || e.clientY !== 0);
+                const x = hasPointer ? e.clientX - rect.left : rect.width / 2;
+                const y = hasPointer ? e.clientY - rect.top : rect.height / 2;
+                const size = Math.max(rect.width, rect.height) * 2.2;
+                const ripple = document.createElement('span');
+                ripple.className = 'final-close__cta-ripple';
+                ripple.style.width = `${size}px`;
+                ripple.style.height = `${size}px`;
+                ripple.style.left = `${x - size / 2}px`;
+                ripple.style.top = `${y - size / 2}px`;
+                cta.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    playSequence();
+                    observer.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.25, rootMargin: '0px 0px -8% 0px' }
+        );
+
+        observer.observe(section);
     }
 
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPackagesAnimations);
+        document.addEventListener('DOMContentLoaded', initFinalCloseSection);
     } else {
-        initPackagesAnimations();
+        initFinalCloseSection();
     }
 })();
 

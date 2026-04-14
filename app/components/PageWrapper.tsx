@@ -8,10 +8,15 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   
   useEffect(() => {
     // Set data-page attribute on body for CSS targeting
-    const page = pathname === '/privacy' ? 'privacy' :
-                 pathname === '/imprint' ? 'imprint' :
-                 pathname === '/cookie-settings' ? 'cookie-settings' :
-                 'home'
+    const norm = pathname?.replace(/\/$/, '') ?? ''
+    const page =
+      norm === '/privacy'
+        ? 'privacy'
+        : norm === '/imprint'
+          ? 'imprint'
+          : norm === '/cookie-settings'
+            ? 'cookie-settings'
+            : 'home'
     
     document.body.setAttribute('data-page', page)
     

@@ -10,13 +10,12 @@ export default function CookieConsent() {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false)
 
   useEffect(() => {
-    // Check if consent has been given
     const consent = localStorage.getItem('cookie-consent')
     if (!consent) {
-      // Check if analytics was previously enabled
       const analytics = localStorage.getItem('cookie-analytics')
       setAnalyticsEnabled(analytics === 'true')
       setShowBanner(true)
+      setShowSettings(true)
     }
   }, [])
 

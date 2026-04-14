@@ -58,7 +58,7 @@ function CognitiveSystemVisualization({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
   const nodesRef = useRef<Node[]>([])
   const timeRef = useRef(0)
 
@@ -245,7 +245,7 @@ function CognitiveSystemVisualization({
 export default function ApproachSection() {
   const [activePrincipleIndex, setActivePrincipleIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     // Auto-rotate principles every 4 seconds

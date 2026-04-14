@@ -1,0 +1,210 @@
+/* Standalone legal pages (privacy/, cookie-settings/, imprint/) — matches main site tokens */
+:root {
+    --legal-bg: #e8edf3;
+    --legal-card: #ffffff;
+    --legal-text: #0f172a;
+    --legal-muted: #475569;
+    --legal-subtle: #64748b;
+    --legal-border: rgba(15, 23, 42, 0.08);
+    --legal-link: #2563eb;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--legal-muted);
+    background: var(--legal-bg);
+    min-height: 100vh;
+}
+
+.legal-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 5.5rem 1.5rem 4rem;
+}
+
+.legal-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.legal-back {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--legal-subtle);
+    text-decoration: none;
+}
+
+.legal-back:hover {
+    color: var(--legal-text);
+}
+
+.legal-close {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--legal-border);
+    background: #fff;
+    color: var(--legal-subtle);
+    text-decoration: none;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.legal-close:hover {
+    color: var(--legal-text);
+}
+
+.legal-title {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--legal-text);
+    margin: 0 0 2rem;
+}
+
+.legal-card {
+    background: var(--legal-card);
+    border: 1px solid var(--legal-border);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.legal-card h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--legal-text);
+    margin: 2rem 0 0.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.legal-card h2:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.legal-card p,
+.legal-card li {
+    margin: 0 0 0.75rem;
+}
+
+.legal-card ul {
+    margin: 0.5rem 0 0.75rem;
+    padding-left: 1.25rem;
+}
+
+.legal-card a {
+    color: var(--legal-link);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.legal-card a:hover {
+    color: #1d4ed8;
+}
+
+.legal-note {
+    font-size: 0.8125rem;
+    color: var(--legal-subtle);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.legal-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    justify-content: center;
+    font-size: 0.8125rem;
+}
+
+.legal-footer a {
+    color: var(--legal-subtle);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.legal-footer a:hover {
+    color: var(--legal-text);
+}
+
+/* Cookie toggle */
+.cookie-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.cookie-toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: #e2e8f0;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s;
+}
+
+.cookie-toggle[aria-checked='true'] {
+    background: #2563eb;
+}
+
+.cookie-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.cookie-toggle[aria-checked='true']::after {
+    transform: translateX(20px);
+}
+
+.btn-save {
+    margin-top: 1.25rem;
+    padding: 0.65rem 1.35rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #f8fafc;
+    background: #0f172a;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background: #1e293b;
+}

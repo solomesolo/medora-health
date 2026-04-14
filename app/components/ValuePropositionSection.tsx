@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 
 function BehavioralFieldVisualization() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
   const phaseRef = useRef<'stable' | 'drift' | 'recovery'>('stable')
   const timeRef = useRef(0)
   const mousePosRef = useRef({ x: 0, y: 0 })

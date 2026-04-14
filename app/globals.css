@@ -1830,21 +1830,21 @@ html {
   transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
-/* Make reality section content visible */
-.reality-section [data-animate] {
+/* Legacy reality editorial layout (if present on other pages) — not .real-problem-section */
+.reality-section:not(.real-problem-section) [data-animate] {
   opacity: 1 !important;
   transform: translateY(0) !important;
   filter: blur(0) !important;
 }
 
-.reality-section .reality-list-item {
+.reality-section:not(.real-problem-section) .reality-list-item {
   opacity: 1 !important;
   transform: translateY(0) !important;
   display: flex !important;
   visibility: visible !important;
 }
 
-.reality-section .reality-header {
+.reality-section:not(.real-problem-section) .reality-header {
   opacity: 1 !important;
   transform: translateY(0) !important;
   filter: blur(0) !important;
@@ -1852,37 +1852,37 @@ html {
   visibility: visible !important;
 }
 
-.reality-section .reality-editorial-list {
+.reality-section:not(.real-problem-section) .reality-editorial-list {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-.reality-section .reality-editorial-grid {
+.reality-section:not(.real-problem-section) .reality-editorial-grid {
   display: grid !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-.reality-section .reality-diagnosis-panel {
+.reality-section:not(.real-problem-section) .reality-diagnosis-panel {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-.reality-section .reality-content {
+.reality-section:not(.real-problem-section) .reality-content {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-.reality-section .reality-item-number,
-.reality-section .reality-item-text {
+.reality-section:not(.real-problem-section) .reality-item-number,
+.reality-section:not(.real-problem-section) .reality-item-text {
   opacity: 1 !important;
   visibility: visible !important;
 }
 
-.reality-section .diagnosis-panel {
+.reality-section:not(.real-problem-section) .diagnosis-panel {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
@@ -1978,7 +1978,7 @@ html {
 /* Ensure the entire section and containers are visible */
 .medora-does-section,
 section.medora-does-section,
-section#solution {
+section#solution:not(.what-we-do-section) {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
@@ -1989,6 +1989,36 @@ section#solution {
   padding-top: calc(4rem + 2rem) !important;
   overflow: visible !important;
   z-index: 1 !important;
+}
+
+section#solution.what-we-do-section {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  min-height: auto !important;
+  padding: clamp(5rem, 12vw, 7.5rem) 0 !important;
+  padding-top: calc(4rem + clamp(2.5rem, 6vw, 4rem)) !important;
+  overflow: visible !important;
+  z-index: 1 !important;
+  background-color: #f4f6f8 !important;
+  background-image: linear-gradient(180deg, #ffffff 0%, #f1f5f9 55%, #eef2f6 100%) !important;
+}
+
+.what-we-do-section .what-we-do-container,
+.what-we-do-section .what-we-do-inner {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.what-we-do-section .what-we-do-container {
+  display: block !important;
+  max-width: 760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
 }
 
 .medora-does-container {
@@ -2083,7 +2113,27 @@ h2.medora-does-headline,
   background: rgba(243, 241, 236, 0.1) !important;
 }
 
-/* Make engagement section content visible */
+/* Services section (expandable cards) — visibility only; keep .section flex layout */
+section#services.services-section,
+.services-section {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.services-section .services-container,
+.services-section .services-header,
+.services-section .services-heading,
+.services-section .services-lede,
+.services-section .services-grid {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.services-section .service-card {
+  visibility: visible !important;
+}
+
+/* Make engagement section content visible (legacy pages) */
 .engagement-section [data-animate],
 .engagement-section [data-animate="card"] {
   opacity: 1 !important;
@@ -2161,87 +2211,6 @@ h2.medora-does-headline,
   display: list-item !important;
 }
 
-/* Make who-section content visible */
-.who-section [data-animate],
-.who-section [data-animate="panel"] {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  filter: blur(0) !important;
-}
-
-.who-section .who-panel {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
-  transform: translateY(0) !important;
-}
-
-.who-section .who-left,
-.who-section .who-right {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
-}
-
-.who-section .who-grid-12 {
-  display: grid !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-.who-section .who-container {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-.who-section .who-eyebrow,
-.who-section .who-headline,
-.who-section .who-checklist,
-.who-section .who-checklist-item,
-.who-section .who-checklist-text,
-.who-section .who-check-icon,
-.who-section .who-checklist-divider,
-.who-section .who-checklist-note {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
-}
-
-.who-section .who-checklist-item {
-  display: flex !important;
-}
-
-.who-section .who-checklist {
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-.who-section .who-deliverables,
-.who-section .who-deliverable-item,
-.who-section .who-deliverable-number,
-.who-section .who-deliverable-content,
-.who-section .who-deliverable-title,
-.who-section .who-deliverable-desc {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: flex !important;
-}
-
-.who-section .who-deliverables {
-  flex-direction: column !important;
-}
-
-.who-section .who-cta-bar,
-.who-section .who-cta-text,
-.who-section .who-cta-buttons,
-.who-section .who-cta-primary,
-.who-section .who-footnote {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
-}
-
 /* Make founder section content visible */
 .founder-section [data-animate],
 .founder-section [data-animate="card"],
@@ -2252,6 +2221,13 @@ h2.medora-does-headline,
 }
 
 .founder-section .founder-profile-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: translateY(0) !important;
+}
+
+.founder-section .founder-story-card {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
@@ -2303,6 +2279,8 @@ h2.medora-does-headline,
 .founder-section .founder-headline,
 .founder-section .founder-text,
 .founder-section .founder-paragraph,
+.founder-section .founder-focus-intro,
+.founder-section .founder-focus-line,
 .founder-section .founder-chips,
 .founder-section .founder-chip {
   opacity: 1 !important;
@@ -2322,9 +2300,5 @@ h2.medora-does-headline,
 
 .founder-section .founder-chip {
   display: inline-flex !important;
-}
-
-.who-section .who-cta-bar {
-  display: flex !important;
 }
 

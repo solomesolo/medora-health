@@ -157,7 +157,7 @@ export default function QuietFailureInsights({
         <h2 className="quiet-insights-heading">Quiet Failure</h2>
         <ul className="quiet-insights-list" role="list">
           {insights.map((insight) => {
-            const Icon = ICON_MAP[insight.id] ?? Activity
+            const Icon = ICON_MAP[insight.id as keyof typeof ICON_MAP] ?? Activity
             return (
               <InsightRow
                 key={insight.id}
