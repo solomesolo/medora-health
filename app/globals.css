@@ -1845,6 +1845,12 @@ html {
   transform: none !important;
 }
 
+.horizontal-scroll-container[data-app="next"] .hero-section [data-animate] {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
 .horizontal-scroll-container .section {
   width: 100%;
   min-height: auto;
