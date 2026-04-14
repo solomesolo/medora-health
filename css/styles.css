@@ -171,6 +171,8 @@ body {
     position: relative;
     white-space: nowrap;
     border: 1px solid transparent;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(15, 23, 42, 0.06);
 }
 
 .nav-item:hover {
@@ -186,16 +188,7 @@ body {
 }
 
 .nav-item.active::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 4px;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: var(--accent-primary);
-    opacity: 0.9;
+    content: none;
 }
 
 /* Desktop Navigation - Hidden on Mobile */
