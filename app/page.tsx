@@ -226,7 +226,7 @@ export default function HomePage() {
             <div className="what-we-do-inner">
               <p className="what-we-do-eyebrow">What we do</p>
               <h2 className="what-we-do-title" id="what-we-do-heading">
-                <span className="sr-only">We make your product work in Germany.</span>
+                <span className="what-we-do-fallback">We make your product work in Germany.</span>
                 <span className="what-we-do-type" aria-hidden="true"></span>
                 <span className="what-we-do-cursor" aria-hidden="true"></span>
               </h2>

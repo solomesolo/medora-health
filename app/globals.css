@@ -1806,6 +1806,27 @@ html {
   position: relative;
 }
 
+.horizontal-scroll-container[data-app="next"] .what-we-do-fallback {
+  display: inline;
+}
+
+.horizontal-scroll-container[data-app="next"] .what-we-do-type,
+.horizontal-scroll-container[data-app="next"] .what-we-do-cursor {
+  display: none;
+}
+
+.horizontal-scroll-container[data-app="next"] .real-problem-word,
+.horizontal-scroll-container[data-app="next"] .real-problem-intro,
+.horizontal-scroll-container[data-app="next"] .real-problem-item,
+.horizontal-scroll-container[data-app="next"] .real-problem-divider {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.horizontal-scroll-container[data-app="next"] .real-problem-timeline-fill {
+  transform: scaleY(1) !important;
+}
+
 .horizontal-scroll-container .section {
   width: 100%;
   min-height: auto;
