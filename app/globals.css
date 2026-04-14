@@ -1827,6 +1827,19 @@ html {
   transform: scaleY(1) !important;
 }
 
+.horizontal-scroll-container[data-app="next"] .what-we-do-core-card {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.horizontal-scroll-container[data-app="next"] .final-close__title,
+.horizontal-scroll-container[data-app="next"] .final-close__line,
+.horizontal-scroll-container[data-app="next"] .final-close__cta,
+.horizontal-scroll-container[data-app="next"] .final-close__micro {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 .horizontal-scroll-container .section {
   width: 100%;
   min-height: auto;
