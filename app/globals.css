@@ -1815,6 +1815,11 @@ html {
   display: none;
 }
 
+.horizontal-scroll-container[data-app="next"] .what-we-do-reject-line {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 .horizontal-scroll-container[data-app="next"] .real-problem-word,
 .horizontal-scroll-container[data-app="next"] .real-problem-intro,
 .horizontal-scroll-container[data-app="next"] .real-problem-item,
